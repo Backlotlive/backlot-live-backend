@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: backlot-live-backend
+    env: node
+    startCommand: node server.js
+    plan: free
+    healthCheckPath: /status
