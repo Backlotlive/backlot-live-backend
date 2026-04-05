@@ -22,8 +22,9 @@ const TIMESHEETS_FILE = path.join(__dirname, 'timesheets_db.json');
 const PAYROLL_FILE =    path.join(__dirname, 'payroll_batches.json');
 const INCIDENTS_FILE =  path.join(__dirname, 'incidents_db.json');
 const ASSETS_FILE =     path.join(__dirname, 'assets_db.json');
+const DPR_FILE =        path.join(__dirname, 'dpr_db.json');
 
-[DB_FILE, RECEIPTS_FILE, CATERING_FILE, TIMESHEETS_FILE, PAYROLL_FILE, INCIDENTS_FILE, ASSETS_FILE].forEach(f => {
+[DB_FILE, RECEIPTS_FILE, CATERING_FILE, TIMESHEETS_FILE, PAYROLL_FILE, INCIDENTS_FILE, ASSETS_FILE, DPR_FILE].forEach(f => {
   if (!fs.existsSync(f)) fs.writeFileSync(f, JSON.stringify([]));
 });
 
@@ -34,6 +35,9 @@ let timesheets    = JSON.parse(fs.readFileSync(TIMESHEETS_FILE));
 let payrollBatches= JSON.parse(fs.readFileSync(PAYROLL_FILE));
 let incidents     = JSON.parse(fs.readFileSync(INCIDENTS_FILE));
 let assets        = JSON.parse(fs.readFileSync(ASSETS_FILE));
+let dprs          = JSON.parse(fs.readFileSync(DPR_FILE));
+let musterEvents  = [];
+let musterResponses = [];
 let activeRequests = [];
 
 // ─── OVERTIME ENGINE ──────────────────────────────────────────────────────────
@@ -273,6 +277,67 @@ app.post('/catering', (req, res) => {
 });
 
 app.get('/catering', (req, res) => res.json(catering));
+
+// ─── TIMESHEET HOD APPROVALS ──────────────────────────────────────────────────
+
+app.patch('/timesheets/approve', (req, res) => {
+  const { id, approvedBy } = req.body;
+  const idx = timesheets.findIndex(t => t.id == id);
+  if (idx >= 0) {
+    timesheets[idx] = { ...timesheets[idx], approved: true, approvedBy, approvedAt: new Date().toISOString() };
+    fs.writeFileSync(TIMESHEETS_FILE, JSON.stringify(timesheets, null, 2));
+    io.emit('timesheet_approved', timesheets[idx]);
+    res.json({ success: true });
+  } else res.status(404).json({ error: 'Not found' });
+});
+
+app.patch('/timesheets/query', (req, res) => {
+  const { id, queryNote, queriedBy } = req.body;
+  const idx = timesheets.findIndex(t => t.id == id);
+  if (idx >= 0) {
+    timesheets[idx] = { ...timesheets[idx], queried: true, queryNote, queriedBy, queriedAt: new Date().toISOString() };
+    fs.writeFileSync(TIMESHEETS_FILE, JSON.stringify(timesheets, null, 2));
+    res.json({ success: true });
+  } else res.status(404).json({ error: 'Not found' });
+});
+
+// ─── EMERGENCY MUSTER ────────────────────────────────────────────────────────
+
+app.post('/muster/call', (req, res) => {
+  const event = { ...req.body, id: Date.now(), active: true, responses: [], timestamp: new Date().toISOString() };
+  musterEvents.push(event);
+  io.emit('emergency_muster', event);
+  console.log(`🚨 MUSTER CALLED by ${req.body.calledBy}`);
+  res.json({ success: true, id: event.id });
+});
+
+app.post('/muster/confirm', (req, res) => {
+  const response = { ...req.body, id: Date.now(), timestamp: new Date().toISOString() };
+  musterResponses.push(response);
+  io.emit('muster_response', response);
+  res.json({ success: true });
+});
+
+app.get('/muster/responses', (req, res) => res.json(musterResponses));
+
+app.post('/muster/clear', (req, res) => {
+  musterResponses = [];
+  io.emit('muster_cleared', { clearedBy: req.body.clearedBy, timestamp: new Date().toISOString() });
+  res.json({ success: true });
+});
+
+// ─── DAILY PROGRESS REPORT ───────────────────────────────────────────────────
+
+app.post('/dpr', (req, res) => {
+  const entry = { ...req.body, id: Date.now(), timestamp: new Date().toISOString() };
+  dprs.push(entry);
+  fs.writeFileSync(DPR_FILE, JSON.stringify(dprs, null, 2));
+  io.emit('new_dpr', entry);
+  console.log(`📋 DPR submitted for ${entry.date}`);
+  res.json({ success: true });
+});
+
+app.get('/dpr', (req, res) => res.json(dprs));
 
 io.on('connection', (socket) => {
   socket.emit('sync_crew', crew);
