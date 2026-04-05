@@ -106,7 +106,7 @@ app.get('/payroll/weekly', (req, res) => {
     }
     const hours = parseHoursFromTotal(ts.total);
     const dayOfWeek = new Date(ts.timestamp).getDay();
-    const isSeventhDay = dayOfWeek === 0; // Sunday
+    const isSeventhDay = ts.isSeventhDay === true; // Only when explicitly flagged
     const rateConfig = crewMap[key].rateMode === 'MEAA' ? null : {
       ordinary: crewMap[key].hourlyRate || MEAA_BASE_HOURLY,
       overtime_1: (crewMap[key].hourlyRate || MEAA_BASE_HOURLY) * 1.5,
