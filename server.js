@@ -230,6 +230,21 @@ app.get('/places/autocomplete', (req, res) => {
   }).on('error', () => res.json({ predictions: [] }));
 });
 
+// Google Place Details proxy — returns formatted_address with postcode
+app.get('/places/details', (req, res) => {
+  const placeId = req.query.place_id;
+  if (!placeId) return res.json({ result: {} });
+  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=formatted_address&key=${GOOGLE_PLACES_KEY}`;
+  https.get(url, (apiRes) => {
+    let data = '';
+    apiRes.on('data', chunk => data += chunk);
+    apiRes.on('end', () => {
+      try { res.json(JSON.parse(data)); }
+      catch { res.json({ result: {} }); }
+    });
+  }).on('error', () => res.json({ result: {} }));
+});
+
 app.get('/status', (req, res) => res.json({ status: 'OK', crew: crew.length, receipts: receipts.length, incidents: incidents.filter(i => i.status === 'OPEN').length }));
 
 app.get('/crew/lookup', (req, res) => {
