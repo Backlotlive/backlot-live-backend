@@ -4,6 +4,9 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+
+const GOOGLE_PLACES_KEY = process.env.GOOGLE_PLACES_KEY || '';
 
 const app = express();
 const server = http.createServer(app);
@@ -211,6 +214,21 @@ app.patch('/assets/:id/return', (req, res) => {
 });
 
 // ─── EXISTING ENDPOINTS ───────────────────────────────────────────────────────
+
+// Google Places autocomplete proxy (avoids CORS on the frontend)
+app.get('/places/autocomplete', (req, res) => {
+  const input = req.query.input;
+  if (!input || input.length < 2) return res.json({ predictions: [] });
+  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&components=country:au&types=address&key=${GOOGLE_PLACES_KEY}`;
+  https.get(url, (apiRes) => {
+    let data = '';
+    apiRes.on('data', chunk => data += chunk);
+    apiRes.on('end', () => {
+      try { res.json(JSON.parse(data)); }
+      catch { res.json({ predictions: [] }); }
+    });
+  }).on('error', () => res.json({ predictions: [] }));
+});
 
 app.get('/status', (req, res) => res.json({ status: 'OK', crew: crew.length, receipts: receipts.length, incidents: incidents.filter(i => i.status === 'OPEN').length }));
 
