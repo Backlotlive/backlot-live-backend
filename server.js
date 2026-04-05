@@ -228,6 +228,22 @@ app.post('/onboard', (req, res) => {
 
 app.get('/crew', (req, res) => res.json(crew));
 
+app.patch('/crew/revoke', (req, res) => {
+  const { phone, name, revoked } = req.body;
+  const idx = crew.findIndex(c =>
+    (phone && c.phone?.replace(/\s/g,'') === phone?.replace(/\s/g,'')) ||
+    (name && c.name?.toLowerCase() === name?.toLowerCase())
+  );
+  if (idx >= 0) {
+    crew[idx] = { ...crew[idx], passRevoked: revoked, revokedAt: revoked ? new Date().toISOString() : null };
+    fs.writeFileSync(DB_FILE, JSON.stringify(crew, null, 2));
+    io.emit('sync_crew', crew);
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ error: 'Crew member not found' });
+  }
+});
+
 app.post('/timesheets', (req, res) => {
   const entry = { ...req.body, id: Date.now(), timestamp: new Date().toISOString() };
   timesheets.push(entry);
