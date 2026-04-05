@@ -353,5 +353,64 @@ io.on('connection', (socket) => {
   });
 });
 
+// ─── FLEET HUB ───────────────────────────────────────────────────────────────
+const FLEET_FILE = path.join(__dirname, 'fleet_db.json');
+if (!fs.existsSync(FLEET_FILE)) fs.writeFileSync(FLEET_FILE, JSON.stringify([]));
+let fleet = JSON.parse(fs.readFileSync(FLEET_FILE));
+
+if (fleet.length === 0) {
+  fleet = [
+    { id: 1, type: 'Hi-Ace Van',        rego: 'BDY 423', colour: 'White',  requiredClass: 'C',  unit: 'Unit 1', status: 'available', assignedDriver: null },
+    { id: 2, type: 'Coaster Bus',       rego: 'TDM 891', colour: 'Silver', requiredClass: 'LR', unit: 'Unit 2', status: 'available', assignedDriver: null },
+    { id: 3, type: 'Isuzu Camera Truck',rego: 'CAM 001', colour: 'Black',  requiredClass: 'MR', unit: 'Unit 3', status: 'available', assignedDriver: null },
+    { id: 4, type: 'Honeywagon',        rego: 'HWY 555', colour: 'White',  requiredClass: 'HR', unit: 'Unit 4', status: 'available', assignedDriver: null },
+    { id: 5, type: 'Generator Truck',   rego: 'GEN 302', colour: 'Yellow', requiredClass: 'HR', unit: 'Unit 5', status: 'available', assignedDriver: null },
+    { id: 6, type: 'Star Trailer Tug',  rego: 'STR 099', colour: 'Red',    requiredClass: 'HR', unit: 'Unit 6', status: 'available', assignedDriver: null },
+  ];
+  fs.writeFileSync(FLEET_FILE, JSON.stringify(fleet, null, 2));
+}
+
+app.get('/fleet', (req, res) => res.json(fleet));
+
+app.post('/fleet', (req, res) => {
+  const vehicle = { ...req.body, id: Date.now(), status: 'available', assignedDriver: null };
+  fleet.push(vehicle);
+  fs.writeFileSync(FLEET_FILE, JSON.stringify(fleet, null, 2));
+  io.emit('fleet_update', fleet);
+  res.json({ success: true, vehicle });
+});
+
+app.patch('/fleet/assign', (req, res) => {
+  const { vehicleId, driverName, driverPhone } = req.body;
+  const idx = fleet.findIndex(v => v.id == vehicleId);
+  if (idx >= 0) {
+    fleet[idx] = { ...fleet[idx], assignedDriver: driverName, assignedDriverPhone: driverPhone, status: 'assigned', assignedAt: new Date().toISOString() };
+    fs.writeFileSync(FLEET_FILE, JSON.stringify(fleet, null, 2));
+    io.emit('fleet_update', fleet);
+    res.json({ success: true });
+  } else res.status(404).json({ error: 'Vehicle not found' });
+});
+
+app.patch('/fleet/unassign', (req, res) => {
+  const { vehicleId } = req.body;
+  const idx = fleet.findIndex(v => v.id == vehicleId);
+  if (idx >= 0) {
+    fleet[idx] = { ...fleet[idx], assignedDriver: null, assignedDriverPhone: null, status: 'available', assignedAt: null };
+    fs.writeFileSync(FLEET_FILE, JSON.stringify(fleet, null, 2));
+    io.emit('fleet_update', fleet);
+    res.json({ success: true });
+  } else res.status(404).json({ error: 'Vehicle not found' });
+});
+
+app.patch('/fleet/:id/status', (req, res) => {
+  const idx = fleet.findIndex(v => v.id == req.params.id);
+  if (idx >= 0) {
+    fleet[idx] = { ...fleet[idx], ...req.body };
+    fs.writeFileSync(FLEET_FILE, JSON.stringify(fleet, null, 2));
+    io.emit('fleet_update', fleet);
+    res.json({ success: true });
+  } else res.status(404).json({ error: 'Not found' });
+});
+
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, '0.0.0.0', () => console.log(`🎬 Backlot Live Backend v2 — http://0.0.0.0:${PORT}`));
