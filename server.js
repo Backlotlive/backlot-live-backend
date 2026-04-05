@@ -230,6 +230,30 @@ app.get('/places/autocomplete', (req, res) => {
   }).on('error', () => res.json({ predictions: [] }));
 });
 
+// ABN lookup & validation proxy
+app.get('/abn/lookup', (req, res) => {
+  const abn = (req.query.abn || '').replace(/\s/g, '');
+  if (!/^\d{11}$/.test(abn)) return res.json({ valid: false, name: null });
+  const weights = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+  const digits = abn.split('').map(Number);
+  digits[0] -= 1;
+  const sum = digits.reduce((acc, d, i) => acc + d * weights[i], 0);
+  if (sum % 89 !== 0) return res.json({ valid: false, name: null });
+  const guid = process.env.ABR_GUID;
+  if (!guid) return res.json({ valid: true, name: null });
+  const url = `https://abr.business.gov.au/json/AbnDetails.aspx?abn=${abn}&callback=callback&guid=${guid}`;
+  https.get(url, (apiRes) => {
+    let data = '';
+    apiRes.on('data', chunk => data += chunk);
+    apiRes.on('end', () => {
+      try {
+        const json = JSON.parse(data.replace(/^callback\(/, '').replace(/\)$/, ''));
+        res.json({ valid: true, name: json.EntityName || null });
+      } catch { res.json({ valid: true, name: null }); }
+    });
+  }).on('error', () => res.json({ valid: true, name: null }));
+});
+
 // Google Place Details proxy — returns formatted_address with postcode
 app.get('/places/details', (req, res) => {
   const placeId = req.query.place_id;
