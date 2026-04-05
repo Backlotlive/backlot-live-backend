@@ -43,11 +43,11 @@ let activeRequests = [];
 const MEAA_BASE_HOURLY = 58.50; // MEAA 2024 standard crew minimum
 
 const MEAA_RATES = {
-  ordinary: MEAA_BASE_HOURLY,
-  overtime_1: 1.5, // 10-12 hrs
-  overtime_2: 2.0, // 12+ hrs
-  seventh_day: 2.0,
-  meal_penalty_per_event: 14.05, // MEAA 2024
+  ordinary: MEAA_BASE_HOURLY,                    // $58.50/hr
+  overtime_1: MEAA_BASE_HOURLY * 1.5,            // $87.75/hr (1.5x after 10hrs)
+  overtime_2: MEAA_BASE_HOURLY * 2.0,            // $117.00/hr (2x after 12hrs)
+  seventh_day: MEAA_BASE_HOURLY * 2.0,           // $117.00/hr (7th day)
+  meal_penalty_per_event: 14.05,                  // MEAA 2024 meal penalty
 };
 
 function calculatePay(hours, isSeventhDay, mealPenalties, rateConfig) {
