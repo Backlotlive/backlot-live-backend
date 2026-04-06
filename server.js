@@ -408,6 +408,53 @@ io.on('connection', (socket) => {
     activeRequests.push(req);
     io.emit('new_request', req); io.emit('sync_requests', activeRequests);
   });
+
+  // ── LOCATION MOVE AVAILABILITY BROADCAST ─────────────────────────────────
+  // Transport manager broadcasts a move request to all drivers
+  socket.on('move_availability_request', (data) => {
+    // data: { moveId, trailer, from, to, time, requestedBy }
+    const moveReq = {
+      ...data,
+      moveId: data.moveId || Date.now(),
+      status: 'pending',
+      responses: [],
+      createdAt: new Date().toISOString(),
+    };
+    // Store in memory
+    if (!global.pendingMoves) global.pendingMoves = {};
+    global.pendingMoves[moveReq.moveId] = moveReq;
+    // Broadcast to ALL connected clients (drivers see this as a notification)
+    io.emit('move_availability_request', moveReq);
+  });
+
+  // Driver responds available/unavailable
+  socket.on('move_driver_response', (data) => {
+    // data: { moveId, driverName, driverPhone, vehicle, available }
+    if (!global.pendingMoves || !global.pendingMoves[data.moveId]) return;
+    const move = global.pendingMoves[data.moveId];
+    // Remove any previous response from same driver
+    move.responses = move.responses.filter(r => r.driverName !== data.driverName);
+    move.responses.push({ ...data, respondedAt: new Date().toISOString() });
+    // Broadcast updated responses to all (transport manager sees the list update)
+    io.emit('move_responses_updated', { moveId: data.moveId, responses: move.responses });
+  });
+
+  // Transport manager assigns a driver to a move
+  socket.on('move_assign_driver', (data) => {
+    // data: { moveId, driverName, vehicle, trailer, from, to }
+    if (global.pendingMoves && global.pendingMoves[data.moveId]) {
+      global.pendingMoves[data.moveId].status = 'assigned';
+      global.pendingMoves[data.moveId].assignedDriver = data.driverName;
+    }
+    // Notify all — especially the assigned driver
+    io.emit('move_assigned', data);
+  });
+
+  // Sync pending moves on connect
+  if (global.pendingMoves) {
+    const active = Object.values(global.pendingMoves).filter(m => m.status === 'pending');
+    if (active.length > 0) socket.emit('sync_pending_moves', active);
+  }
 });
 
 // ─── FLEET HUB ───────────────────────────────────────────────────────────────
