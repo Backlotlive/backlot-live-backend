@@ -8,6 +8,24 @@ const https = require('https');
 
 const GOOGLE_PLACES_KEY = process.env.GOOGLE_PLACES_KEY || '';
 
+// ── WEB PUSH ─────────────────────────────────────────────────────────────────
+const webpush = require('web-push');
+const VAPID_PUBLIC  = process.env.VAPID_PUBLIC  || 'BEB7qxizcZPZZThVWHfUtHbc98rsiYJ6RoT15EoFQYJBuRojwm_eTDZK6tUAqmBfsiTgUTTOYT505E4_nWXf5l8';
+const VAPID_PRIVATE = process.env.VAPID_PRIVATE || '-8dU_ExA2LaDg8p6QpoxQQl25t54XhumMVvRuXmCjos';
+webpush.setVapidDetails('mailto:admin@backlotlive.com', VAPID_PUBLIC, VAPID_PRIVATE);
+
+// In-memory push subscription store (keyed by driverName)
+let pushSubscriptions = {}; // { driverName: { subscription, vehicle, phone } }
+
+// In-memory assigned moves store
+let assignedMoves = {}; // { driverName: moveDetails }
+
+// In-memory vehicle locations (live GPS)
+let vehicleLocations = {}; // { driverName: { lat, lng, vehicle, timestamp } }
+
+// In-memory key handovers { driverName: { keyLocation, keyPhoto, vehicleId, timestamp } }
+let keyHandovers = {};
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
@@ -514,6 +532,81 @@ app.patch('/fleet/:id/status', (req, res) => {
     io.emit('fleet_update', fleet);
     res.json({ success: true });
   } else res.status(404).json({ error: 'Not found' });
+});
+
+// ── PUSH NOTIFICATION SUBSCRIPTION ───────────────────────────────────────────
+app.post('/push/subscribe', (req, res) => {
+  const { driverName, subscription } = req.body;
+  if (!driverName || !subscription) return res.status(400).json({ error: 'Missing fields' });
+  pushSubscriptions[driverName] = { ...pushSubscriptions[driverName], subscription, driverName };
+  res.json({ success: true, vapidPublic: VAPID_PUBLIC });
+});
+
+app.get('/push/vapid-public', (req, res) => res.json({ key: VAPID_PUBLIC }));
+
+// ── ASSIGN MOVE TO DRIVER (with push notification) ───────────────────────
+app.post('/moves/assign', (req, res) => {
+  const move = req.body; // { driverName, vehicle, trailer, from, to, date, time, notes, moveId }
+  if (!move.driverName) return res.status(400).json({ error: 'driverName required' });
+  assignedMoves[move.driverName] = { ...move, assignedAt: new Date().toISOString(), status: 'assigned', keyHandover: null };
+  // Push notification if subscribed
+  const sub = pushSubscriptions[move.driverName];
+  if (sub?.subscription) {
+    const payload = JSON.stringify({
+      title: '🚚 LOCATION MOVE ASSIGNED',
+      body: `${move.trailer} → ${move.to}`,
+      data: { url: '/transport/driver' },
+    });
+    webpush.sendNotification(sub.subscription, payload).catch(err => {
+      if (err.statusCode === 410) delete pushSubscriptions[move.driverName];
+    });
+  }
+  // Also emit via socket for immediate in-app update
+  io.emit('move_assigned_to_driver', { driverName: move.driverName, move: assignedMoves[move.driverName] });
+  res.json({ success: true });
+});
+
+app.get('/moves/assigned/:driverName', (req, res) => {
+  const move = assignedMoves[req.params.driverName];
+  res.json(move || null);
+});
+
+app.get('/moves/all-assigned', (req, res) => res.json(assignedMoves));
+
+// ── VEHICLE LOCATION (live GPS from driver) ─────────────────────────────
+app.post('/vehicles/location', (req, res) => {
+  const { driverName, vehicle, lat, lng } = req.body;
+  if (!driverName || !lat || !lng) return res.status(400).json({ error: 'Missing fields' });
+  vehicleLocations[driverName] = { driverName, vehicle, lat, lng, timestamp: new Date().toISOString() };
+  io.emit('vehicle_location_update', vehicleLocations[driverName]);
+  res.json({ success: true });
+});
+
+app.get('/vehicles/locations', (req, res) => res.json(Object.values(vehicleLocations)));
+
+// ── KEY HANDOVER ──────────────────────────────────────────────────────────
+app.post('/moves/key-handover', (req, res) => {
+  const { driverName, keyLocation, keyPhoto, vehicleId, moveId } = req.body;
+  if (!driverName || !keyLocation) return res.status(400).json({ error: 'driverName and keyLocation required' });
+  const handover = { driverName, keyLocation, keyPhoto: keyPhoto || null, vehicleId, moveId, timestamp: new Date().toISOString() };
+  keyHandovers[driverName] = handover;
+  if (assignedMoves[driverName]) {
+    assignedMoves[driverName].status = 'parked';
+    assignedMoves[driverName].keyHandover = handover;
+  }
+  io.emit('key_handover_complete', handover);
+  res.json({ success: true });
+});
+
+app.get('/moves/key-handovers', (req, res) => res.json(Object.values(keyHandovers)));
+app.get('/moves/key-handover/:driverName', (req, res) => res.json(keyHandovers[req.params.driverName] || null));
+
+// ── DRIVER SIGN-OFF CHECK ──────────────────────────────────────────────────
+app.get('/moves/signoff-check/:driverName', (req, res) => {
+  const move = assignedMoves[req.params.driverName];
+  if (!move) return res.json({ clear: true });
+  const needsHandover = move.status === 'assigned' || (move.status === 'parked' && !move.keyHandover);
+  res.json({ clear: !needsHandover, move, needsHandover });
 });
 
 const PORT = process.env.PORT || 4000;
