@@ -476,6 +476,15 @@ app.get('/crew', (req, res) => res.json(crew.map(stripSensitive)));
 // Full /crew/full — admin only
 app.get('/crew/full', requireAdmin, (req, res) => res.json(crew));
 
+// DELETE test crew (phones starting with 04999000) — for automated testing cleanup
+app.delete('/crew/test-cleanup', requireAdmin, (req, res) => {
+  const before = crew.length;
+  crew = crew.filter(c => !c.phone?.replace(/\s/g,'').startsWith('04999000'));
+  fs.writeFileSync(DB_FILE, JSON.stringify(crew, null, 2));
+  io.emit('sync_crew', crew);
+  res.json({ success: true, removed: before - crew.length, remaining: crew.length });
+});
+
 app.patch('/crew/revoke', requireAdmin, (req, res) => {
   const { phone, name, revoked } = req.body;
   const idx = crew.findIndex(c =>
