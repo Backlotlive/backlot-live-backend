@@ -22,8 +22,16 @@ const GOOGLE_PLACES_KEY = process.env.GOOGLE_PLACES_KEY || '';
 const webpush = require('web-push');
 const VAPID_PUBLIC  = process.env.VAPID_PUBLIC  || 'BEB7qxizcZPZZThVWHfUtHbc98rsiYJ6RoT15EoFQYJBuRojwm_eTDZK6tUAqmBfsiTgUTTOYT505E4_nWXf5l8';
 const VAPID_PRIVATE = process.env.VAPID_PRIVATE || '';
-if (!VAPID_PRIVATE) console.warn('⚠️  VAPID_PRIVATE not set in environment — push notifications disabled');
-webpush.setVapidDetails('mailto:info@backlotlive.com.au', VAPID_PUBLIC, VAPID_PRIVATE);
+if (VAPID_PUBLIC && VAPID_PRIVATE) {
+  try {
+    webpush.setVapidDetails('mailto:info@backlotlive.com.au', VAPID_PUBLIC, VAPID_PRIVATE);
+    console.log('✅ Push notifications enabled');
+  } catch (e) {
+    console.warn('⚠️  Push notification setup failed:', e.message);
+  }
+} else {
+  console.warn('⚠️  VAPID keys not set — push notifications disabled');
+}
 
 // In-memory push subscription store (keyed by driverName)
 let pushSubscriptions = {}; // { driverName: { subscription, vehicle, phone } }
