@@ -1,3 +1,10 @@
+const Sentry = require('@sentry/node');
+Sentry.init({
+  dsn: 'https://31da2b9952ea872e1bbb45f89e0fb165@o4511182949187584.ingest.us.sentry.io/4511182964064256',
+  environment: process.env.NODE_ENV || 'production',
+  tracesSampleRate: 0.2,
+});
+
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -1270,4 +1277,7 @@ app.patch('/leads/:id', (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
+// Sentry error handler — must be after all routes
+Sentry.setupExpressErrorHandler(app);
+
 server.listen(PORT, '0.0.0.0', () => console.log(`🎬 Backlot Live Backend v2 — http://0.0.0.0:${PORT}`));
