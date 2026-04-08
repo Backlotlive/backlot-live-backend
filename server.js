@@ -766,18 +766,61 @@ app.post('/muster/clear', requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
-// ─── DAILY PROGRESS REPORT ───────────────────────────────────────────────────
+// ─── DAILY PRODUCTION REPORT ────────────────────────────────────────────────
 
+// POST /dpr — create or update DPR for a date (upsert by date)
 app.post('/dpr', (req, res) => {
-  const entry = { ...req.body, id: Date.now(), timestamp: new Date().toISOString() };
+  const { date } = req.body;
+  if (!date) return res.status(400).json({ error: 'date is required' });
+  const idx = dprs.findIndex(d => d.date === date);
+  const now = new Date().toISOString();
+  if (idx >= 0) {
+    // Update existing
+    dprs[idx] = { ...dprs[idx], ...req.body, updatedAt: now };
+    fs.writeFileSync(DPR_FILE, JSON.stringify(dprs, null, 2));
+    io.emit('dpr_updated', dprs[idx]);
+    console.log(`📋 DPR updated for ${date}`);
+    return res.json({ success: true, dpr: dprs[idx] });
+  }
+  // Create new
+  const entry = {
+    ...req.body,
+    id: require('crypto').randomUUID ? require('crypto').randomUUID() : `dpr-${Date.now()}`,
+    createdAt: now,
+    updatedAt: now,
+  };
   dprs.push(entry);
   fs.writeFileSync(DPR_FILE, JSON.stringify(dprs, null, 2));
   io.emit('new_dpr', entry);
-  console.log(`📋 DPR submitted for ${entry.date}`);
-  res.json({ success: true });
+  console.log(`📋 DPR created for ${date}`);
+  res.json({ success: true, dpr: entry });
 });
 
-app.get('/dpr', (req, res) => res.json(dprs));
+// GET /dpr — all DPRs (reverse chronological)
+app.get('/dpr', (req, res) => {
+  const sorted = [...dprs].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  res.json(sorted);
+});
+
+// GET /dpr/:date — single DPR by date (YYYY-MM-DD)
+app.get('/dpr/:date', (req, res) => {
+  const dpr = dprs.find(d => d.date === req.params.date);
+  if (!dpr) return res.status(404).json({ error: 'DPR not found' });
+  res.json(dpr);
+});
+
+// POST /dpr/:date/approve — approve a DPR (admin only)
+app.post('/dpr/:date/approve', requireAdmin, (req, res) => {
+  const idx = dprs.findIndex(d => d.date === req.params.date);
+  if (idx < 0) return res.status(404).json({ error: 'DPR not found' });
+  dprs[idx].approved = true;
+  dprs[idx].approvedBy = req.body.approvedBy || 'Admin';
+  dprs[idx].approvedAt = new Date().toISOString();
+  fs.writeFileSync(DPR_FILE, JSON.stringify(dprs, null, 2));
+  io.emit('dpr_approved', dprs[idx]);
+  console.log(`✅ DPR approved for ${req.params.date}`);
+  res.json({ success: true, dpr: dprs[idx] });
+});
 
 io.on('connection', (socket) => {
   socket.emit('sync_crew', crew);
