@@ -23,7 +23,7 @@ try {
 } catch {}
 const https = require('https');
 
-const GOOGLE_PLACES_KEY = process.env.GOOGLE_PLACES_KEY || '';
+const GOOGLE_PLACES_KEY = process.env.GOOGLE_PLACES_KEY || 'AIzaSyBeVC6nzT8jsBk7qsjUCpRE2DPpV8YdpyY';
 
 // ── WEB PUSH ─────────────────────────────────────────────────────────────────
 const webpush = require('web-push');
@@ -298,7 +298,7 @@ app.patch('/assets/:id/return', (req, res) => {
 app.get('/places/autocomplete', (req, res) => {
   const input = req.query.input;
   if (!input || input.length < 2) return res.json({ predictions: [] });
-  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&components=country:au&types=address&key=${GOOGLE_PLACES_KEY}`;
+  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&components=country:au&types=geocode|establishment&key=${GOOGLE_PLACES_KEY}`;
   https.get(url, (apiRes) => {
     let data = '';
     apiRes.on('data', chunk => data += chunk);
