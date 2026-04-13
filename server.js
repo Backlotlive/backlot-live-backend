@@ -389,6 +389,7 @@ app.post('/onboard', (req, res) => {
       contractSignedAt: entry.contractSigned ? now : null,
       firstLoginAt: now,
       lastSeen: now,
+      passRevoked: false,
     });
   }
   fs.writeFileSync(DB_FILE, JSON.stringify(crew, null, 2));
@@ -508,11 +509,36 @@ app.patch('/crew/revoke', requireAdmin, (req, res) => {
   }
 });
 
+app.patch('/crew/restore', requireAdmin, (req, res) => {
+  const { phone, name } = req.body;
+  const idx = crew.findIndex(c =>
+    (phone && c.phone?.replace(/\s/g,'') === phone?.replace(/\s/g,'')) ||
+    (name && c.name?.toLowerCase() === name?.toLowerCase())
+  );
+  if (idx >= 0) {
+    crew[idx] = { ...crew[idx], passRevoked: false, revokedAt: null, restoredAt: new Date().toISOString() };
+    fs.writeFileSync(DB_FILE, JSON.stringify(crew, null, 2));
+    io.emit('sync_crew', crew);
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ error: 'Crew member not found' });
+  }
+});
+
 app.post('/timesheets', (req, res) => {
-  const entry = { ...req.body, id: Date.now(), timestamp: new Date().toISOString() };
-  timesheets.push(entry);
+  const { phone, date, clockOut } = req.body;
+  const existing = phone && date
+    ? timesheets.findIndex(t => t.phone === phone && t.date === date)
+    : -1;
+  if (existing >= 0 && clockOut) {
+    // Clock-off: update the existing clock-on entry instead of duplicating
+    timesheets[existing] = { ...timesheets[existing], ...req.body, updatedAt: new Date().toISOString() };
+  } else {
+    const entry = { ...req.body, id: Date.now(), timestamp: new Date().toISOString() };
+    timesheets.push(entry);
+  }
   fs.writeFileSync(TIMESHEETS_FILE, JSON.stringify(timesheets, null, 2));
-  io.emit('new_timesheet', entry);
+  io.emit('new_timesheet', req.body);
   res.json({ success: true });
 });
 
