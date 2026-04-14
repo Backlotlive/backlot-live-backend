@@ -575,7 +575,7 @@ app.patch('/assets/:id/return', (req, res) => {
 app.get('/places/autocomplete', (req, res) => {
   const input = req.query.input;
   if (!input || input.length < 2) return res.json({ predictions: [] });
-  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&components=country:au&types=geocode|establishment&key=${GOOGLE_PLACES_KEY}`;
+  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&types=geocode|establishment&key=${GOOGLE_PLACES_KEY}`;
   https.get(url, (apiRes) => {
     let data = '';
     apiRes.on('data', chunk => data += chunk);
@@ -1575,7 +1575,7 @@ app.post('/owner/send-invite', async (req, res) => {
         <tr><td style="background:#0d0d0d;padding:40px;">
           <p style="color:#ccc;font-size:16px;line-height:1.7;margin:0 0 24px;">Hi ${firstName},</p>
           <p style="color:#ccc;font-size:16px;line-height:1.7;margin:0 0 24px;">
-            I'd like to invite you to try <strong style="color:#fff;">Backlot Live™</strong> — the production management platform purpose-built for the Australian film and television industry.
+            I'd like to invite you to try <strong style="color:#fff;">Backlot Live™</strong> — the production management platform built for the global film and television industry.
           </p>
           <p style="color:#ccc;font-size:16px;line-height:1.7;margin:0 0 32px;">
             Your private demo gives you full access to the platform — including crew onboarding, digital timecards, catering management, transport dispatch, and more.
@@ -1615,7 +1615,7 @@ app.post('/owner/send-invite', async (req, res) => {
                 <div style="font-size:12px;color:#888;">Operations Manager — Backlot Live™</div>
                 <div style="margin-top:8px;">
                   <a href="mailto:info@backlotlive.com.au" style="color:#b266ff;font-size:12px;text-decoration:none;">info@backlotlive.com.au</a><br>
-                  <span style="color:#888;font-size:12px;">+61 419 485 88</span>
+                  <span style="color:#888;font-size:12px;">+61 419 485 888
                 </div>
               </td>
               <td align="right">
@@ -1652,7 +1652,7 @@ app.post('/owner/send-invite', async (req, res) => {
 
   // Otherwise return the HTML for the client to open via mailto
   const subject = encodeURIComponent(`Your Backlot Live™ Demo Access — Code: ${productionCode}`);
-  const plainBody = encodeURIComponent(`Hi ${firstName},\n\nYou're invited to try Backlot Live™ — the production management platform for film and TV.\n\nYour private access code: ${productionCode}\n\nOpen the app at: ${appUrl}\nOr click: ${joinUrl}\n\n— Jamie Dorward\nOperations Manager, Backlot Live™\ninfo@backlotlive.com.au | +61 419 485 88`);
+  const plainBody = encodeURIComponent(`Hi ${firstName},\n\nYou're invited to try Backlot Live™ — the production management platform for film and TV.\n\nYour private access code: ${productionCode}\n\nOpen the app at: ${appUrl}\nOr click: ${joinUrl}\n\n— Jamie Dorward\nOperations Manager, Backlot Live™\ninfo@backlotlive.com.au | +61 419 485 888
   const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${plainBody}`;
   res.json({ success: true, method: 'mailto', mailtoLink, htmlBody, to: recipientEmail });
 });
