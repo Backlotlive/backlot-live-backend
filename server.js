@@ -22,6 +22,7 @@ try {
   }
 } catch {}
 const https = require('https');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || '');
 
 const GOOGLE_PLACES_KEY = process.env.GOOGLE_PLACES_KEY || 'AIzaSyBeVC6nzT8jsBk7qsjUCpRE2DPpV8YdpyY';
 
@@ -67,6 +68,8 @@ const ALLOWED_ORIGINS = [
   'http://192.168.0.251:8081',
 ];
 app.use(cors({ origin: (origin, cb) => cb(null, !origin || ALLOWED_ORIGINS.includes(origin)) }));
+// Raw body needed for Stripe webhook signature verification
+app.use('/stripe-webhook', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '10mb' }));
 
 // ── ADMIN AUTH MIDDLEWARE ─────────────────────────────────────────────────────
@@ -209,6 +212,31 @@ function generateProductionCode() {
   } while (productionsRegistry.some(p => p.code === code));
   return code;
 }
+
+// ── LICENSE MIGRATION — add license fields to existing productions ─────────────
+(function migrateLicenseFields() {
+  let changed = false;
+  productionsRegistry = productionsRegistry.map(p => {
+    if (!p.tier) {
+      changed = true;
+      const isDemo = p.isDemo === true || p.source === 'demo' || p.code === 'DEMO01';
+      return {
+        ...p,
+        tier: 'production',
+        maxCrew: 150,
+        expiryDate: isDemo ? null : new Date(Date.now() + 90 * 86400000).toISOString(),
+        source: isDemo ? 'demo' : 'paid',
+        stripeSessionId: null,
+        stripeCustomerEmail: null,
+      };
+    }
+    return p;
+  });
+  if (changed) {
+    saveProductionsRegistry();
+    console.log('✅ License fields migrated for existing productions');
+  }
+})();
 
 // ── DEMO01 SEED (20 realistic Australian film crew) ───────────────────────────
 // Only seeds if crew_db.json is empty on first run.
@@ -357,6 +385,9 @@ app.post('/productions/create', (req, res) => {
   const { title, company, createdBy } = req.body;
   if (!title) return res.status(400).json({ error: 'title is required' });
   const code = generateProductionCode();
+  const { tier = 'production', source = 'demo', maxCrew: maxCrewOverride } = req.body;
+  const maxCrewMap = { indie: 25, production: 150, studio: 0 };
+  const resolvedMaxCrew = maxCrewOverride !== undefined ? parseInt(maxCrewOverride) : (maxCrewMap[tier] ?? 150);
   const entry = {
     id: code,
     code,
@@ -364,8 +395,14 @@ app.post('/productions/create', (req, res) => {
     company: company || '',
     createdAt: new Date().toISOString(),
     createdBy: createdBy || 'Unknown',
-    isDemo: false,
+    isDemo: source === 'demo' || source === 'trailers_bundle',
     active: true,
+    tier,
+    maxCrew: resolvedMaxCrew,
+    expiryDate: null,
+    source,
+    stripeSessionId: null,
+    stripeCustomerEmail: null,
   };
   productionsRegistry.push(entry);
   saveProductionsRegistry();
@@ -664,6 +701,33 @@ app.post('/onboard', (req, res) => {
   const now = new Date().toISOString();
   const entry = { ...req.body, timestamp: now };
   delete entry.code;
+
+  // ── LICENSE ENFORCEMENT ────────────────────────────────────────────────────
+  const licRegEntry = productionsRegistry.find(p => p.code === code);
+  if (licRegEntry && licRegEntry.source !== 'demo') {
+    // Check expiry
+    if (licRegEntry.expiryDate && new Date(licRegEntry.expiryDate) < new Date()) {
+      return res.status(403).json({
+        error: 'license_expired',
+        expiryDate: licRegEntry.expiryDate,
+        message: 'This production license has expired. Contact jamie@backlotlive.com.au to renew.',
+      });
+    }
+    // Check crew limit
+    if (licRegEntry.maxCrew > 0) {
+      const currentCrew = readProductionDb(code, 'crew_db.json');
+      const isExisting = currentCrew.some(c => c.phone?.replace(/\s/g,'') === (entry.phone||'').replace(/\s/g,''));
+      if (!isExisting && currentCrew.length >= licRegEntry.maxCrew) {
+        const tierName = (licRegEntry.tier || 'indie').charAt(0).toUpperCase() + (licRegEntry.tier || 'indie').slice(1);
+        return res.status(403).json({
+          error: 'crew_limit_reached',
+          tier: licRegEntry.tier || 'indie',
+          maxCrew: licRegEntry.maxCrew,
+          message: `This production has reached its ${tierName} crew limit (${licRegEntry.maxCrew}). Contact jamie@backlotlive.com.au to upgrade.`,
+        });
+      }
+    }
+  }
 
   const crewData = readProductionDb(code, 'crew_db.json');
   const idx = crewData.findIndex(c => c.phone?.replace(/\s/g,'') === (entry.phone||'').replace(/\s/g,''));
@@ -1498,6 +1562,341 @@ app.patch('/support/ticket/:id', (req, res) => {
   res.json({ success: true, ticket: supportTickets[idx] });
 });
 
+// ─── RESEND EMAIL — OUTREACH + INVITE ────────────────────────────────────────
+const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_j97QwKUF_3oV4Cy7Evmp2baG21Wg8R2j1';
+
+function buildInviteEmailHtml(firstName, productionCode, joinUrl) {
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{margin:0;padding:0;background:#f0f0f0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}a{color:#8833cc;}</style>
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f0f0;padding:32px 16px;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:18px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.18);">
+  <tr><td style="background:linear-gradient(135deg,#0d0d0d 0%,#1a0a2e 100%);padding:0;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="padding:32px 40px 0;">
+          <div style="font-size:10px;font-weight:800;letter-spacing:5px;color:#b266ff;margin-bottom:10px;">BACKLOT LIVE&trade;</div>
+          <div style="font-size:28px;font-weight:900;color:#ffffff;line-height:1.2;letter-spacing:-0.5px;">Production<br>Management System</div>
+          <div style="font-size:11px;color:#666;margin-top:10px;letter-spacing:3px;">PRIVATE DEMO INVITATION</div>
+        </td>
+        <td width="120" style="padding:32px 32px 0 0;vertical-align:top;text-align:right;"><div style="font-size:42px;line-height:1;">&#127916;</div></td>
+      </tr>
+      <tr><td colspan="2" style="padding:24px 40px;">
+        <div style="height:2px;background:linear-gradient(90deg,#b266ff,#ff66aa,#ffcc00);border-radius:2px;"></div>
+      </td></tr>
+    </table>
+  </td></tr>
+  <tr><td style="background:#ffffff;padding:40px;">
+    <p style="font-size:17px;color:#111;margin:0 0 20px;font-weight:600;">Hi ${firstName},</p>
+    <p style="font-size:15px;color:#444;line-height:1.8;margin:0 0 20px;">
+      I'd like to invite you to experience <strong style="color:#8833cc;">Backlot Live&trade;</strong> &mdash; the production management platform built for the global film and television industry.
+    </p>
+    <p style="font-size:15px;color:#444;line-height:1.8;margin:0 0 32px;">
+      Your private demo gives you <strong>full access</strong> &mdash; crew onboarding, digital timecards, transport dispatch, catering, studio passes, payroll and more.
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+      <tr>
+        <td style="padding:4px;"><table><tr><td style="background:#f5edff;border:1px solid #d0a0ff;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#8833cc;white-space:nowrap;">&#10003; Crew Onboarding</td></tr></table></td>
+        <td style="padding:4px;"><table><tr><td style="background:#f5edff;border:1px solid #d0a0ff;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#8833cc;white-space:nowrap;">&#10003; Digital Timecards</td></tr></table></td>
+        <td style="padding:4px;"><table><tr><td style="background:#f5edff;border:1px solid #d0a0ff;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#8833cc;white-space:nowrap;">&#10003; Catering Hub</td></tr></table></td>
+      </tr>
+      <tr>
+        <td style="padding:4px;"><table><tr><td style="background:#f5edff;border:1px solid #d0a0ff;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#8833cc;white-space:nowrap;">&#10003; Transport Dispatch</td></tr></table></td>
+        <td style="padding:4px;"><table><tr><td style="background:#f5edff;border:1px solid #d0a0ff;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#8833cc;white-space:nowrap;">&#10003; Studio Passes</td></tr></table></td>
+        <td style="padding:4px;"><table><tr><td style="background:#f5edff;border:1px solid #d0a0ff;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#8833cc;white-space:nowrap;">&#10003; Live Comms</td></tr></table></td>
+      </tr>
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr><td style="background:linear-gradient(135deg,#0d0d0d,#1a0a2e);border-radius:14px;padding:28px;text-align:center;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:#b266ff;margin-bottom:14px;">YOUR PRIVATE ACCESS CODE</div>
+        <div style="font-size:46px;font-weight:900;color:#ffffff;letter-spacing:10px;font-family:'Courier New',monospace;text-shadow:0 0 20px rgba(178,102,255,0.5);">${productionCode}</div>
+        <div style="font-size:12px;color:#666;margin-top:12px;letter-spacing:1px;">Enter this code when the app opens</div>
+      </td></tr>
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr><td align="center">
+        <a href="${joinUrl}" style="display:inline-block;background:linear-gradient(135deg,#b266ff,#8833cc);color:#fff;font-size:16px;font-weight:900;letter-spacing:2px;padding:18px 56px;border-radius:12px;text-decoration:none;box-shadow:0 4px 20px rgba(178,102,255,0.4);">OPEN BACKLOT LIVE &rarr;</a>
+      </td></tr>
+    </table>
+    <p style="font-size:13px;color:#888;text-align:center;margin:0;">Works on iPhone, iPad, Android or desktop. No download required.</p>
+  </td></tr>
+  <tr><td style="background:#fafafa;border-top:3px solid #f0f0f0;padding:28px 40px;">
+    <table width="100%"><tr>
+      <td style="vertical-align:top;">
+        <div style="font-size:16px;font-weight:900;color:#111;margin-bottom:2px;">Jamie Dorward</div>
+        <div style="font-size:12px;color:#8833cc;font-weight:700;margin-bottom:12px;">Operations Manager &mdash; Backlot Live&trade;</div>
+        <div style="font-size:13px;color:#555;line-height:2;">
+          &#128231; <a href="mailto:info@backlotlive.com.au" style="color:#8833cc;text-decoration:none;">info@backlotlive.com.au</a><br>
+          &#128241; +61 419 485 888<br>
+          &#127760; <a href="https://backlotlive.com.au" style="color:#8833cc;text-decoration:none;">backlotlive.com.au</a>
+        </div>
+      </td>
+      <td width="140" style="vertical-align:middle;text-align:right;">
+        <div style="background:linear-gradient(135deg,#0d0d0d,#1a0a2e);border-radius:12px;padding:16px;display:inline-block;">
+          <div style="font-size:8px;font-weight:900;letter-spacing:3px;color:#b266ff;">BACKLOT LIVE&trade;</div>
+          <div style="font-size:9px;color:#555;letter-spacing:1px;margin-top:4px;">Production Technology</div>
+        </div>
+      </td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="background:#0d0d0d;padding:18px 40px;text-align:center;">
+    <p style="font-size:11px;color:#444;margin:0;">This is a private invitation. Please do not forward this code.</p>
+    <p style="font-size:11px;color:#333;margin:6px 0 0;">&copy; 2026 Backlot Live&trade; &mdash; Starmoves Pty Ltd ABN 55 665 728 521</p>
+  </td></tr>
+</table>
+</td></tr></table>
+</body></html>`;
+}
+
+app.post('/send-outreach', async (req, res) => {
+  const { recipientName, recipientEmail, company, isFollowUp, productionCode, adminKey: key } = req.body;
+  if ((key || '') !== (process.env.ADMIN_KEY || 'backlot-admin-2026')) return res.status(403).json({ error: 'Forbidden' });
+  if (!recipientEmail) return res.status(400).json({ error: 'Missing email' });
+
+  // Create production code if not provided
+  let code = productionCode;
+  if (!code) {
+    const safeCode = (Math.random().toString(36).slice(2,8)).toUpperCase();
+    code = safeCode;
+    // Create production entry
+    try {
+      const dir = path.join(__dirname, 'productions', code);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      const reg = JSON.parse(fs.readFileSync(PRODUCTIONS_REGISTRY_FILE, 'utf8'));
+      reg.push({ id: code, code, title: (company || recipientName || 'Demo') + ' — Backlot Live Demo', company: company || recipientName || '', createdBy: 'Jamie Dorward', createdAt: new Date().toISOString(), isDemo: true, active: true });
+      fs.writeFileSync(PRODUCTIONS_REGISTRY_FILE, JSON.stringify(reg, null, 2));
+    } catch {}
+  }
+
+  const firstName = (recipientName || 'Team').split(' ')[0];
+  const appUrl = 'https://backlot-live-app.vercel.app';
+  const joinUrl = `${appUrl}?code=${code}`;
+
+  let subject, htmlBody;
+  if (isFollowUp) {
+    subject = 'Following up — Backlot Live™ Demo';
+    htmlBody = buildInviteEmailHtml(firstName, code, joinUrl).replace(
+      'PRIVATE DEMO INVITATION',
+      'FOLLOWING UP'
+    ).replace(
+      "I'd like to invite you to experience",
+      "Just following up on my message from last week about"
+    );
+  } else {
+    subject = 'Backlot Live™ — Production Management Platform';
+    htmlBody = buildInviteEmailHtml(firstName, code, joinUrl);
+  }
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'Jamie Dorward — Backlot Live <onboarding@resend.dev>',
+        reply_to: 'info@backlotlive.com.au',
+        to: [recipientEmail],
+        subject,
+        html: htmlBody,
+      }),
+    });
+    const data = await response.json();
+    if (data.id) {
+      return res.json({ success: true, code, emailId: data.id });
+    }
+    return res.status(500).json({ error: 'Send failed', detail: data });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Also update /owner/send-invite to use Resend
+app.post('/owner/send-invite-resend', async (req, res) => {
+  const { adminKey: key, recipientName, recipientEmail, productionCode, productionTitle } = req.body;
+  if ((key || '') !== (process.env.ADMIN_KEY || 'backlot-admin-2026')) return res.status(403).json({ error: 'Forbidden' });
+  if (!recipientEmail || !productionCode) return res.status(400).json({ error: 'Missing fields' });
+
+  const firstName = (recipientName || 'Team').split(' ')[0];
+  const appUrl = 'https://backlot-live-app.vercel.app';
+  const joinUrl = `${appUrl}?code=${productionCode}`;
+  const htmlBody = buildInviteEmailHtml(firstName, productionCode, joinUrl);
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'Jamie Dorward — Backlot Live <onboarding@resend.dev>',
+        reply_to: 'info@backlotlive.com.au',
+        to: [recipientEmail],
+        subject: `Your Backlot Live™ Demo Access — Code: ${productionCode}`,
+        html: htmlBody,
+      }),
+    });
+    const data = await response.json();
+    if (data.id) return res.json({ success: true, method: 'resend', emailId: data.id, to: recipientEmail });
+    return res.status(500).json({ error: 'Send failed', detail: data });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+// ─── STRIPE LICENSING ─────────────────────────────────────────────────────────
+
+// POST /create-checkout-session
+app.post('/create-checkout-session', async (req, res) => {
+  const { tier, companyName, contactEmail, contactName } = req.body;
+  if (!tier || !companyName || !contactEmail) {
+    return res.status(400).json({ error: 'tier, companyName, and contactEmail are required' });
+  }
+  const STRIPE_PRICES = {
+    indie:      { amount: 150000,  name: 'Backlot Live — Indie (up to 25 crew)',         mode: 'payment' },
+    production: { amount: 350000,  name: 'Backlot Live — Production (up to 150 crew)',   mode: 'payment' },
+    studio:     { amount: 3500000, name: 'Backlot Live — Studio (unlimited, per year)', mode: 'subscription' },
+  };
+  const priceConfig = STRIPE_PRICES[tier];
+  if (!priceConfig) return res.status(400).json({ error: 'Invalid tier. Use indie, production, or studio.' });
+  try {
+    const metadata = { tier, companyName, contactEmail, contactName: contactName || '' };
+    let session;
+    if (priceConfig.mode === 'payment') {
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'], mode: 'payment',
+        line_items: [{ price_data: { currency: 'aud', product_data: { name: priceConfig.name }, unit_amount: priceConfig.amount }, quantity: 1 }],
+        customer_email: contactEmail, metadata,
+        success_url: 'https://backlotlive.com.au/success?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url: 'https://backlotlive.com.au/pricing',
+      });
+    } else {
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'], mode: 'subscription',
+        line_items: [{ price_data: { currency: 'aud', product_data: { name: priceConfig.name }, unit_amount: priceConfig.amount, recurring: { interval: 'year' } }, quantity: 1 }],
+        customer_email: contactEmail, metadata,
+        success_url: 'https://backlotlive.com.au/success?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url: 'https://backlotlive.com.au/pricing',
+      });
+    }
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error('Stripe checkout error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /stripe-webhook
+app.post('/stripe-webhook', async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  let event;
+  try {
+    if (webhookSecret && sig) {
+      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    } else {
+      event = JSON.parse(Buffer.isBuffer(req.body) ? req.body.toString() : JSON.stringify(req.body));
+    }
+  } catch (err) {
+    console.error('Stripe webhook error:', err.message);
+    return res.status(400).json({ error: 'Webhook Error: ' + err.message });
+  }
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const meta = session.metadata || {};
+    const tier = meta.tier || 'indie';
+    const companyName = meta.companyName || 'Unknown';
+    const contactEmail = session.customer_email || meta.contactEmail || '';
+    const contactName = meta.contactName || '';
+    const maxCrewByTier = { indie: 25, production: 150, studio: 0 };
+    const expiryDaysByTier = { indie: 90, production: 90, studio: 365 };
+    const code = generateProductionCode();
+    const now = new Date();
+    const expiryDate = new Date(now.getTime() + (expiryDaysByTier[tier] || 90) * 86400000).toISOString();
+    const entry = {
+      id: code, code,
+      title: (companyName + ' — Backlot Live').toUpperCase(),
+      company: companyName, createdAt: now.toISOString(),
+      createdBy: contactName || contactEmail,
+      isDemo: false, active: true, tier,
+      maxCrew: maxCrewByTier[tier] != null ? maxCrewByTier[tier] : 150,
+      expiryDate, stripeSessionId: session.id,
+      stripeCustomerEmail: contactEmail, source: 'paid',
+    };
+    productionsRegistry.push(entry);
+    saveProductionsRegistry();
+    const dir = require('path').join(__dirname, 'productions', code);
+    if (!require('fs').existsSync(dir)) require('fs').mkdirSync(dir, { recursive: true });
+    ['crew_db.json','timesheets_db.json','receipts_db.json','catering_preferences.json','incidents_db.json','dpr_db.json'].forEach(f => {
+      require('fs').writeFileSync(require('path').join(dir, f), JSON.stringify([], null, 2));
+    });
+    require('fs').writeFileSync(require('path').join(dir, 'production_db.json'), JSON.stringify({ title: entry.title, productionCompany: companyName, isDemo: false, createdAt: entry.createdAt }, null, 2));
+    console.log('💳 PAID PRODUCTION: ' + entry.title + ' (' + code + ') — ' + tier);
+    io.emit('new_production', entry);
+    const resendKey = process.env.RESEND_API_KEY;
+    if (resendKey && contactEmail) {
+      const joinUrl = 'https://backlot-live-app.vercel.app?code=' + code;
+      const tierLabel = { indie: 'Indie', production: 'Production', studio: 'Studio' }[tier] || tier;
+      const maxDisplay = maxCrewByTier[tier] === 0 ? 'Unlimited' : maxCrewByTier[tier];
+      try {
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: 'Jamie Dorward — Backlot Live <onboarding@resend.dev>',
+            reply_to: 'jamie@backlotlive.com.au',
+            to: [contactEmail],
+            subject: 'Your Backlot Live™ Production Code — ' + code,
+            html: '<html><body style="font-family:Helvetica,Arial,sans-serif;background:#f0f0f0;padding:32px"><table width="600" style="max-width:600px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden"><tr><td style="background:linear-gradient(135deg,#0d0d0d,#1a0a2e);padding:32px 40px;text-align:center"><div style="font-size:11px;letter-spacing:4px;color:#b266ff;font-weight:900;margin-bottom:8px">BACKLOT LIVE™</div><div style="font-size:24px;font-weight:900;color:#fff">Welcome!</div><div style="font-size:13px;color:#888;margin-top:8px">' + tierLabel + ' Plan — Payment Confirmed</div></td></tr><tr><td style="padding:40px"><p style="font-size:16px;color:#333;margin:0 0 24px">Your Backlot Live™ <strong>' + tierLabel + '</strong> production is ready.</p><div style="background:#1a0a2e;border-radius:14px;padding:28px;text-align:center;margin-bottom:28px"><div style="font-size:11px;letter-spacing:4px;color:#b266ff;font-weight:900;margin-bottom:12px">YOUR PRODUCTION CODE</div><div style="font-size:42px;font-weight:900;color:#fff;letter-spacing:10px;font-family:monospace">' + code + '</div></div><div style="text-align:center"><a href="' + joinUrl + '" style="display:inline-block;background:#b266ff;color:#fff;font-size:15px;font-weight:900;padding:16px 48px;border-radius:10px;text-decoration:none">OPEN APP →</a></div><p style="font-size:13px;color:#888;margin-top:24px">Need help? <a href="mailto:jamie@backlotlive.com.au" style="color:#b266ff">jamie@backlotlive.com.au</a></p></td></tr></table></body></html>',
+          }),
+        });
+        console.log('📧 Welcome email → ' + contactEmail);
+      } catch (e) { console.error('Welcome email failed:', e.message); }
+    }
+  }
+  res.json({ received: true });
+});
+
+// GET /production/:code/license
+app.get('/production/:code/license', requireAdmin, (req, res) => {
+  const code = req.params.code.toUpperCase();
+  const regEntry = productionsRegistry.find(p => p.code === code);
+  if (!regEntry) return res.status(404).json({ error: 'Production not found' });
+  let currentCrew = 0;
+  try { currentCrew = readProductionDb(code, 'crew_db.json').length; } catch {}
+  const now = new Date();
+  const expiry = regEntry.expiryDate ? new Date(regEntry.expiryDate) : null;
+  res.json({
+    code, title: regEntry.title || code, company: regEntry.company || '',
+    tier: regEntry.tier || 'production', maxCrew: regEntry.maxCrew != null ? regEntry.maxCrew : 150,
+    currentCrew, expiryDate: regEntry.expiryDate || null,
+    daysRemaining: expiry ? Math.max(0, Math.ceil((expiry - now) / 86400000)) : null,
+    isExpired: expiry ? expiry < now : false,
+    isAtLimit: (regEntry.maxCrew || 0) > 0 && currentCrew >= regEntry.maxCrew,
+    source: regEntry.source || 'demo',
+    stripeCustomerEmail: regEntry.stripeCustomerEmail || null,
+  });
+});
+
+// POST /production/:code/upgrade
+app.post('/production/:code/upgrade', requireAdmin, (req, res) => {
+  const code = req.params.code.toUpperCase();
+  const { tier } = req.body;
+  if (!['production', 'studio'].includes(tier)) {
+    return res.status(400).json({ error: 'Invalid tier. Use production or studio.' });
+  }
+  const idx = productionsRegistry.findIndex(p => p.code === code);
+  if (idx < 0) return res.status(404).json({ error: 'Production not found' });
+  const maxCrewByTier = { production: 150, studio: 0 };
+  productionsRegistry[idx] = { ...productionsRegistry[idx], tier, maxCrew: maxCrewByTier[tier], upgradedAt: new Date().toISOString() };
+  saveProductionsRegistry();
+  console.log('⬆️  UPGRADE: ' + code + ' → ' + tier);
+  res.json({ success: true, code, tier, maxCrew: maxCrewByTier[tier] });
+});
+
+
 // ── Catch-all: serve the Expo app ─────────────────────────────────────────────
 app.use((req, res, next) => {
   if (req.path.startsWith('/api') || req.path.startsWith('/crew') || req.path.startsWith('/production') ||
@@ -1507,7 +1906,8 @@ app.use((req, res, next) => {
       req.path.startsWith('/dpr') || req.path.startsWith('/assets') || req.path.startsWith('/moves') ||
       req.path.startsWith('/vehicles') || req.path.startsWith('/push') || req.path.startsWith('/status') ||
       req.path.startsWith('/catering') || req.path.startsWith('/productions') || req.path.startsWith('/owner') ||
-      req.path.startsWith('/leads') || req.path.startsWith('/socket.io')) {
+      req.path.startsWith('/leads') || req.path.startsWith('/socket.io') ||
+      req.path.startsWith('/stripe-webhook') || req.path.startsWith('/create-checkout-session')) {
     return next();
   }
   const frontendFile = path.join(FRONTEND, req.path);
@@ -1652,10 +2052,12 @@ app.post('/owner/send-invite', async (req, res) => {
 
   // Otherwise return the HTML for the client to open via mailto
   const subject = encodeURIComponent(`Your Backlot Live™ Demo Access — Code: ${productionCode}`);
-  const plainBody = encodeURIComponent(`Hi ${firstName},\n\nYou're invited to try Backlot Live™ — the production management platform for film and TV.\n\nYour private access code: ${productionCode}\n\nOpen the app at: ${appUrl}\nOr click: ${joinUrl}\n\n— Jamie Dorward\nOperations Manager, Backlot Live™\ninfo@backlotlive.com.au | +61 419 485 888
+  const plainBody = encodeURIComponent(`Hi ${firstName},\n\nYou're invited to try Backlot Live™ — the production management platform for film and TV.\n\nYour private access code: ${productionCode}\n\nOpen the app at: ${appUrl}\nOr click: ${joinUrl}\n\n— Jamie Dorward\nOperations Manager, Backlot Live™\ninfo@backlotlive.com.au | +61 419 485 888`);
   const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${plainBody}`;
   res.json({ success: true, method: 'mailto', mailtoLink, htmlBody, to: recipientEmail });
 });
+
+
 
 const PORT = process.env.PORT || 4000;
 // Sentry error handler — must be after all routes
