@@ -1,0 +1,153 @@
+{
+  "title": "The Demise of the Diesel Monster",
+  "productionCompany": "Backlot Live Productions",
+  "distributor": "Backlot Live / Village Roadshow",
+  "genre": "Feature Film \u2014 Action / Drama",
+  "format": "ARRI ALEXA 35 \u2014 4K",
+  "shootStart": "03/03/2026",
+  "shootEnd": "15/05/2026",
+  "totalShootDays": "42",
+  "currentDay": "14",
+  "generalCall": "06:00",
+  "studio": "Village Roadshow Studios Stage 5",
+  "state": "QLD",
+  "safetyCode": "0400 000 000",
+  "unitBase": "Village Roadshow Studios Stage 5, Gold Coast QLD",
+  "unitBaseAddress": "Pacific Motorway, Oxenford QLD 4210",
+  "nearestHospital": "Gold Coast University Hospital",
+  "hospitalDistance": "12 mins",
+  "nearestPolice": "Oxenford Police Station \u2014 Siganto Drive, Helensvale",
+  "setAddress": "Stage 5, Village Roadshow Studios, Pacific Motorway, Oxenford QLD",
+  "meetingPoint": "Main entrance gate \u2014 beside the camera truck",
+  "parkingInfo": "Crew park in Lot C. Enter via Gate 2 on Pacific Motorway. Security will check your pass.",
+  "director": "Michael J. Anderson",
+  "producer": "Jamie Dorward",
+  "producerPhone": "0400 000 001",
+  "lineProducer": "Rachel Connors",
+  "firstAD": "Marcus Webb",
+  "firstADPhone": "0400 000 005",
+  "unitManager": "Dave Kowalski",
+  "unitManagerPhone": "0400 000 007",
+  "setNurse": "Sarah Jones",
+  "setNursePhone": "0411 111 111",
+  "sunriseTime": "05:48",
+  "sunsetTime": "17:32",
+  "weather": "Fine, 26\u00b0C, light SE breeze",
+  "scriptVersion": "Rev. 4 \u2014 Pink (03/04/26)",
+  "scenes": [
+    {
+      "num": "47",
+      "desc": "INT. DIESEL REFINERY \u2014 NIGHT",
+      "pages": "4 1/8",
+      "cast": "1, 3, 5"
+    },
+    {
+      "num": "48",
+      "desc": "EXT. HIGHWAY \u2014 DAWN",
+      "pages": "2 3/8",
+      "cast": "1, 2"
+    },
+    {
+      "num": "49",
+      "desc": "INT. CONTROL ROOM \u2014 CONTINUOUS",
+      "pages": "1 4/8",
+      "cast": "3, 7"
+    }
+  ],
+  "deptCalls": [
+    {
+      "dept": "Transport / Unit",
+      "time": "05:00"
+    },
+    {
+      "dept": "Lighting / Grip",
+      "time": "05:30"
+    },
+    {
+      "dept": "Camera",
+      "time": "06:00"
+    },
+    {
+      "dept": "Hair & Makeup",
+      "time": "06:00"
+    },
+    {
+      "dept": "Art Department",
+      "time": "05:45"
+    },
+    {
+      "dept": "Sound",
+      "time": "06:00"
+    },
+    {
+      "dept": "Cast (Lead)",
+      "time": "08:00"
+    },
+    {
+      "dept": "Supporting Artists",
+      "time": "09:00"
+    }
+  ],
+  "suppliers": [
+    {
+      "name": "Panavision Australia",
+      "category": "Camera & Lens Hire",
+      "phone": "07 3123 4567",
+      "contact": "Brett Collins",
+      "accountNum": "PAV-0042",
+      "notes": "24hr emergency line available"
+    },
+    {
+      "name": "Sunbelt Rentals",
+      "category": "Grip & Lighting",
+      "phone": "07 5555 1234",
+      "contact": "Karen Hughes",
+      "accountNum": "SBR-7721",
+      "notes": ""
+    },
+    {
+      "name": "Backlot Trailers",
+      "category": "Unit Base Trailers",
+      "phone": "07 5512 3456",
+      "contact": "Mike Dorward",
+      "accountNum": "BLT-0018",
+      "notes": "Honeywagon Unit 3 on standby"
+    },
+    {
+      "name": "Starmoves",
+      "category": "Crew Transport",
+      "phone": "07 3456 7890",
+      "contact": "Operations Desk",
+      "accountNum": "STM-2026",
+      "notes": "Swing vans booked 05:00\u201320:00"
+    },
+    {
+      "name": "Gold Coast Catering Co.",
+      "category": "Catering",
+      "phone": "07 5678 9012",
+      "contact": "Chef Dana",
+      "accountNum": "GCC-0091",
+      "notes": "Meal penalty clock starts 13:00"
+    },
+    {
+      "name": "Village Roadshow Studios",
+      "category": "Studio Facilities",
+      "phone": "07 5573 3999",
+      "contact": "Stage Manager",
+      "accountNum": "VRS-STAGE5",
+      "notes": ""
+    }
+  ],
+  "productionAccountant": "Linda Marsh",
+  "accountantPhone": "0400 000 010",
+  "accountantEmail": "accounts@backlotlive.com",
+  "payrollCompany": "Entertainment Partners Australia",
+  "abn": "12 345 678 901",
+  "bankName": "Commonwealth Bank",
+  "pettyCashLimit": "200",
+  "poBoxAddress": "PO Box 100, Surfers Paradise QLD 4217",
+  "advanceSchedule": "Day 15 \u2014 EXT. Highway chase sequence. Early call 05:30. Stunt team on set.",
+  "updatedAt": "2026-04-06T21:36:26.208Z",
+  "directorPhone": "0412 000 100",
+  "lineProducerPhone": "0412 000 101"
+}

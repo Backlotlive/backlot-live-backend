@@ -1543,6 +1543,120 @@ app.patch('/leads/:id', (req, res) => {
   res.json({ success: true, lead: leads[idx] });
 });
 
+// ─── OWNER PORTAL — SEND DEMO INVITE EMAIL ─────────────────────────────────
+const nodemailer = require('nodemailer');
+
+app.post('/owner/send-invite', async (req, res) => {
+  const { adminKey, recipientName, recipientEmail, productionCode, productionTitle, emailUser, emailPass } = req.body;
+  if (adminKey !== (process.env.ADMIN_KEY || 'backlot-admin-2026')) return res.status(403).json({ error: 'Forbidden' });
+  if (!recipientEmail || !productionCode) return res.status(400).json({ error: 'Missing fields' });
+
+  const firstName = (recipientName || 'there').split(' ')[0];
+  const appUrl = 'https://backlot-live-app.vercel.app';
+  const joinUrl = `${appUrl}?code=${productionCode}`;
+
+  const htmlBody = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+        <!-- HEADER -->
+        <tr><td style="background:#111;border-radius:16px 16px 0 0;padding:32px 40px;text-align:center;border-bottom:2px solid #b266ff;">
+          <div style="font-size:11px;font-weight:900;letter-spacing:4px;color:#b266ff;margin-bottom:8px;">BACKLOT LIVE™</div>
+          <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:1px;">PRODUCTION MANAGEMENT SYSTEM</div>
+          <div style="font-size:12px;color:#666;margin-top:6px;letter-spacing:2px;">PRIVATE DEMO INVITATION</div>
+        </td></tr>
+
+        <!-- BODY -->
+        <tr><td style="background:#0d0d0d;padding:40px;">
+          <p style="color:#ccc;font-size:16px;line-height:1.7;margin:0 0 24px;">Hi ${firstName},</p>
+          <p style="color:#ccc;font-size:16px;line-height:1.7;margin:0 0 24px;">
+            I'd like to invite you to try <strong style="color:#fff;">Backlot Live™</strong> — the production management platform purpose-built for the Australian film and television industry.
+          </p>
+          <p style="color:#ccc;font-size:16px;line-height:1.7;margin:0 0 32px;">
+            Your private demo gives you full access to the platform — including crew onboarding, digital timecards, catering management, transport dispatch, and more.
+          </p>
+
+          <!-- CODE BOX -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+            <tr><td style="background:#1a1a1a;border:2px solid #b266ff;border-radius:12px;padding:28px;text-align:center;">
+              <div style="font-size:11px;font-weight:900;letter-spacing:3px;color:#b266ff;margin-bottom:12px;">YOUR PRIVATE ACCESS CODE</div>
+              <div style="font-size:42px;font-weight:900;color:#fff;letter-spacing:8px;font-family:monospace;">${productionCode}</div>
+              <div style="font-size:12px;color:#666;margin-top:10px;">Enter this code when you open the app</div>
+            </td></tr>
+          </table>
+
+          <!-- CTA BUTTON -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+            <tr><td align="center">
+              <a href="${joinUrl}" style="display:inline-block;background:#b266ff;color:#fff;font-size:15px;font-weight:900;letter-spacing:2px;padding:18px 48px;border-radius:10px;text-decoration:none;">OPEN BACKLOT LIVE →</a>
+            </td></tr>
+          </table>
+
+          <p style="color:#888;font-size:14px;line-height:1.6;margin:0 0 16px;">
+            Or open <a href="${appUrl}" style="color:#b266ff;">${appUrl}</a> and enter code <strong style="color:#fff;font-family:monospace;font-size:16px;">${productionCode}</strong>
+          </p>
+
+          <p style="color:#888;font-size:13px;line-height:1.6;margin:24px 0 0;border-top:1px solid #1a1a1a;padding-top:24px;">
+            Works on any device — iPhone, Android, iPad, or desktop browser. No download required.
+          </p>
+        </td></tr>
+
+        <!-- FOOTER -->
+        <tr><td style="background:#111;border-radius:0 0 16px 16px;padding:28px 40px;border-top:1px solid #1a1a1a;">
+          <table width="100%">
+            <tr>
+              <td>
+                <div style="font-size:13px;font-weight:900;color:#fff;margin-bottom:4px;">Jamie Dorward</div>
+                <div style="font-size:12px;color:#888;">Operations Manager — Backlot Live™</div>
+                <div style="margin-top:8px;">
+                  <a href="mailto:info@backlotlive.com.au" style="color:#b266ff;font-size:12px;text-decoration:none;">info@backlotlive.com.au</a><br>
+                  <span style="color:#888;font-size:12px;">+61 419 485 88</span>
+                </div>
+              </td>
+              <td align="right">
+                <div style="font-size:10px;color:#333;letter-spacing:2px;">BACKLOT LIVE™<br>Production Technology</div>
+              </td>
+            </tr>
+          </table>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  // If SMTP credentials provided, send directly
+  if (emailUser && emailPass) {
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: emailUser, pass: emailPass },
+      });
+      await transporter.sendMail({
+        from: `"Jamie Dorward — Backlot Live" <${emailUser}>`,
+        to: recipientEmail,
+        subject: `Your Backlot Live™ Demo Access — Code: ${productionCode}`,
+        html: htmlBody,
+      });
+      return res.json({ success: true, method: 'smtp', to: recipientEmail });
+    } catch (err) {
+      return res.status(500).json({ error: 'Email send failed', detail: err.message });
+    }
+  }
+
+  // Otherwise return the HTML for the client to open via mailto
+  const subject = encodeURIComponent(`Your Backlot Live™ Demo Access — Code: ${productionCode}`);
+  const plainBody = encodeURIComponent(`Hi ${firstName},\n\nYou're invited to try Backlot Live™ — the production management platform for film and TV.\n\nYour private access code: ${productionCode}\n\nOpen the app at: ${appUrl}\nOr click: ${joinUrl}\n\n— Jamie Dorward\nOperations Manager, Backlot Live™\ninfo@backlotlive.com.au | +61 419 485 88`);
+  const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${plainBody}`;
+  res.json({ success: true, method: 'mailto', mailtoLink, htmlBody, to: recipientEmail });
+});
+
 const PORT = process.env.PORT || 4000;
 // Sentry error handler — must be after all routes
 Sentry.setupExpressErrorHandler(app);

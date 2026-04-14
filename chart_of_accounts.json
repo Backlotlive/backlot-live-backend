@@ -1,0 +1,125 @@
+{
+  "screenAustralia": [
+    {
+      "code": "A",
+      "category": "Story & Rights",
+      "type": "Above The Line"
+    },
+    {
+      "code": "B",
+      "category": "Producers & Overheads",
+      "type": "Above The Line"
+    },
+    {
+      "code": "C",
+      "category": "Production Unit Fees & Salaries",
+      "type": "Below The Line"
+    },
+    {
+      "code": "D",
+      "category": "Extras",
+      "type": "Below The Line"
+    },
+    {
+      "code": "E",
+      "category": "Principal Cast & Casting",
+      "type": "Above The Line"
+    },
+    {
+      "code": "F",
+      "category": "Camera, Sound, Make-up, Costume",
+      "type": "Below The Line"
+    },
+    {
+      "code": "G",
+      "category": "Lighting & Grip",
+      "type": "Below The Line"
+    },
+    {
+      "code": "H",
+      "category": "Art Department & Set Construction",
+      "type": "Below The Line"
+    },
+    {
+      "code": "K",
+      "category": "Action Vehicles & Animals",
+      "type": "Below The Line"
+    },
+    {
+      "code": "L",
+      "category": "Location Expenses",
+      "type": "Below The Line"
+    },
+    {
+      "code": "M",
+      "category": "Crew Allowances",
+      "type": "Below The Line"
+    },
+    {
+      "code": "N",
+      "category": "Travel & Transport",
+      "type": "Below The Line"
+    },
+    {
+      "code": "O",
+      "category": "Film, Digital Media & Laboratory",
+      "type": "Below The Line"
+    },
+    {
+      "code": "P",
+      "category": "Editing",
+      "type": "Below The Line"
+    },
+    {
+      "code": "Q",
+      "category": "Sound Post-Production",
+      "type": "Below The Line"
+    },
+    {
+      "code": "R",
+      "category": "Visual Effects (VFX)",
+      "type": "Below The Line"
+    },
+    {
+      "code": "U",
+      "category": "Insurances, Legal, & Accounting",
+      "type": "Below The Line"
+    },
+    {
+      "code": "V",
+      "category": "Delivery Items",
+      "type": "Below The Line"
+    },
+    {
+      "code": "W",
+      "category": "Director",
+      "type": "Above The Line"
+    }
+  ],
+  "globalNumeric": [
+    {
+      "series": "1000",
+      "category": "Above the Line"
+    },
+    {
+      "series": "2000",
+      "category": "Production Operations"
+    },
+    {
+      "series": "3000",
+      "category": "Art Department & Wardrobe"
+    },
+    {
+      "series": "4000",
+      "category": "Location Facilities & Transport"
+    },
+    {
+      "series": "5000",
+      "category": "Post-Production"
+    },
+    {
+      "series": "6000",
+      "category": "General Overhead"
+    }
+  ]
+}

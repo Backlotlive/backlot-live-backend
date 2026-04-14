@@ -1,0 +1,308 @@
+[
+  {
+    "weekLabel": "30/03/2026 — 05/04/2026",
+    "weekStart": "2026-03-29T14:00:00.000Z",
+    "weekEnd": "2026-04-05T13:59:59.999Z",
+    "generatedAt": "2026-04-04T22:53:55.567Z",
+    "totalCrew": 4,
+    "report": [
+      {
+        "name": "Jamie Dorward",
+        "role": "Producer",
+        "department": "PRODUCTION",
+        "hourlyRate": 85,
+        "rateMode": "CUSTOM",
+        "days": [
+          {
+            "date": "2026-04-04",
+            "clockIn": "06:00",
+            "clockOut": "18:30",
+            "hours": "12.50",
+            "ordinary": 10,
+            "ot1": 2,
+            "ot2": 0.5,
+            "mealPenalties": 0,
+            "gross": 1190
+          }
+        ],
+        "totalOrdinary": "10.00",
+        "totalOT1": "2.00",
+        "totalOT2": "0.50",
+        "receipts": [
+          {
+            "date": "04/04/2026",
+            "shop": "OFFICEWORKS",
+            "account": "B",
+            "amount": "$28.40"
+          }
+        ],
+        "totalReimbursements": "$28.40",
+        "grossPay": "$1190.00",
+        "totalHours": "12.50",
+        "totalPayable": "$1218.40"
+      },
+      {
+        "name": "Dave Smith",
+        "role": "Swing Driver",
+        "department": "UNIT/TRANSPORT",
+        "hourlyRate": 55,
+        "rateMode": "MEAA",
+        "days": [
+          {
+            "date": "2026-04-04",
+            "clockIn": "05:30",
+            "clockOut": "19:00",
+            "hours": "13.50",
+            "ordinary": 10,
+            "ot1": 2,
+            "ot2": 1.5,
+            "mealPenalties": 1,
+            "gross": 605.05
+          }
+        ],
+        "totalOrdinary": "10.00",
+        "totalOT1": "2.00",
+        "totalOT2": "1.50",
+        "receipts": [
+          {
+            "date": "04/04/2026",
+            "shop": "KENNARDS HIRE",
+            "account": "G",
+            "amount": "$380.00"
+          },
+          {
+            "date": "04/04/2026",
+            "shop": "7-ELEVEN (FUEL)",
+            "account": "N",
+            "amount": "$95.20"
+          }
+        ],
+        "totalReimbursements": "$475.20",
+        "grossPay": "$605.05",
+        "totalHours": "13.50",
+        "totalPayable": "$1080.25"
+      },
+      {
+        "name": "Mike Miller",
+        "role": "Gaffer",
+        "department": "LIGHTING",
+        "hourlyRate": 75,
+        "rateMode": "MEAA",
+        "days": [
+          {
+            "date": "2026-04-04",
+            "clockIn": "06:00",
+            "clockOut": "20:00",
+            "hours": "14.00",
+            "ordinary": 10,
+            "ot1": 2,
+            "ot2": 2,
+            "mealPenalties": 0,
+            "gross": 592
+          }
+        ],
+        "totalOrdinary": "10.00",
+        "totalOT1": "2.00",
+        "totalOT2": "2.00",
+        "receipts": [
+          {
+            "date": "04/04/2026",
+            "shop": "BUNNINGS OXENFORD",
+            "account": "H",
+            "amount": "$142.50"
+          }
+        ],
+        "totalReimbursements": "$142.50",
+        "grossPay": "$592.00",
+        "totalHours": "14.00",
+        "totalPayable": "$734.50"
+      },
+      {
+        "name": "Lisa Chen",
+        "role": "1st AC",
+        "department": "CAMERA",
+        "hourlyRate": 72,
+        "rateMode": "MEAA",
+        "days": [
+          {
+            "date": "2026-04-04",
+            "clockIn": "06:00",
+            "clockOut": "18:00",
+            "hours": "12.00",
+            "ordinary": 10,
+            "ot1": 2,
+            "ot2": 0,
+            "mealPenalties": 0,
+            "gross": 588
+          }
+        ],
+        "totalOrdinary": "10.00",
+        "totalOT1": "2.00",
+        "totalOT2": "0.00",
+        "receipts": [],
+        "totalReimbursements": "$0.00",
+        "grossPay": "$588.00",
+        "totalHours": "12.00",
+        "totalPayable": "$588.00"
+      }
+    ],
+    "id": 1775343252197,
+    "sentAt": "2026-04-04T22:54:12.197Z"
+  },
+  {
+    "weekLabel": "30/03/2026 — 05/04/2026",
+    "weekStart": "2026-03-29T14:00:00.000Z",
+    "weekEnd": "2026-04-05T13:59:59.999Z",
+    "generatedAt": "2026-04-05T04:10:22.903Z",
+    "totalCrew": 4,
+    "report": [
+      {
+        "name": "Jamie Dorward",
+        "role": "Producer",
+        "department": "PRODUCTION",
+        "hourlyRate": 85,
+        "rateMode": "CUSTOM",
+        "days": [
+          {
+            "date": "2026-04-04",
+            "clockIn": "06:00",
+            "clockOut": "18:30",
+            "hours": "12.50",
+            "ordinary": 10,
+            "ot1": 2,
+            "ot2": 0.5,
+            "mealPenalties": 0,
+            "gross": 1190
+          }
+        ],
+        "totalOrdinary": "10.00",
+        "totalOT1": "2.00",
+        "totalOT2": "0.50",
+        "receipts": [
+          {
+            "date": "04/04/2026",
+            "shop": "OFFICEWORKS",
+            "account": "B",
+            "amount": "$28.40"
+          },
+          {
+            "date": "05/04/2026",
+            "shop": "Shell",
+            "account": "N",
+            "amount": "$200.00"
+          }
+        ],
+        "totalReimbursements": "$228.40",
+        "grossPay": "$1190.00",
+        "totalHours": "12.50",
+        "totalPayable": "$1418.40"
+      },
+      {
+        "name": "Dave Smith",
+        "role": "Swing Driver",
+        "department": "UNIT/TRANSPORT",
+        "hourlyRate": 55,
+        "rateMode": "MEAA",
+        "days": [
+          {
+            "date": "2026-04-04",
+            "clockIn": "05:30",
+            "clockOut": "19:00",
+            "hours": "13.50",
+            "ordinary": 10,
+            "ot1": 2,
+            "ot2": 1.5,
+            "mealPenalties": 1,
+            "gross": 950.05
+          }
+        ],
+        "totalOrdinary": "10.00",
+        "totalOT1": "2.00",
+        "totalOT2": "1.50",
+        "receipts": [
+          {
+            "date": "04/04/2026",
+            "shop": "KENNARDS HIRE",
+            "account": "G",
+            "amount": "$380.00"
+          },
+          {
+            "date": "04/04/2026",
+            "shop": "7-ELEVEN (FUEL)",
+            "account": "N",
+            "amount": "$95.20"
+          }
+        ],
+        "totalReimbursements": "$475.20",
+        "grossPay": "$950.05",
+        "totalHours": "13.50",
+        "totalPayable": "$1425.25"
+      },
+      {
+        "name": "Mike Miller",
+        "role": "Gaffer",
+        "department": "LIGHTING",
+        "hourlyRate": 75,
+        "rateMode": "MEAA",
+        "days": [
+          {
+            "date": "2026-04-04",
+            "clockIn": "06:00",
+            "clockOut": "20:00",
+            "hours": "14.00",
+            "ordinary": 10,
+            "ot1": 2,
+            "ot2": 2,
+            "mealPenalties": 0,
+            "gross": 994.5
+          }
+        ],
+        "totalOrdinary": "10.00",
+        "totalOT1": "2.00",
+        "totalOT2": "2.00",
+        "receipts": [
+          {
+            "date": "04/04/2026",
+            "shop": "BUNNINGS OXENFORD",
+            "account": "H",
+            "amount": "$142.50"
+          }
+        ],
+        "totalReimbursements": "$142.50",
+        "grossPay": "$994.50",
+        "totalHours": "14.00",
+        "totalPayable": "$1137.00"
+      },
+      {
+        "name": "Lisa Chen",
+        "role": "1st AC",
+        "department": "CAMERA",
+        "hourlyRate": 72,
+        "rateMode": "MEAA",
+        "days": [
+          {
+            "date": "2026-04-04",
+            "clockIn": "06:00",
+            "clockOut": "18:00",
+            "hours": "12.00",
+            "ordinary": 10,
+            "ot1": 2,
+            "ot2": 0,
+            "mealPenalties": 0,
+            "gross": 760.5
+          }
+        ],
+        "totalOrdinary": "10.00",
+        "totalOT1": "2.00",
+        "totalOT2": "0.00",
+        "receipts": [],
+        "totalReimbursements": "$0.00",
+        "grossPay": "$760.50",
+        "totalHours": "12.00",
+        "totalPayable": "$760.50"
+      }
+    ],
+    "id": 1775362258501,
+    "sentAt": "2026-04-05T04:10:58.501Z"
+  }
+]

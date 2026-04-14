@@ -1,0 +1,29 @@
+[
+  {
+    "id": 2001,
+    "date": "2026-04-06",
+    "shootingDay": 13,
+    "productionTitle": "The Demise of the Diesel Monster",
+    "director": "Michael J. Anderson",
+    "dp": "Priya Sharma",
+    "firstAD": "Marcus Webb",
+    "callTime": "06:00",
+    "wrapTime": "19:45",
+    "totalHours": 13.75,
+    "scheduledScenes": [
+      "Sc 44",
+      "Sc 45",
+      "Sc 46"
+    ],
+    "completedScenes": [
+      "Sc 44",
+      "Sc 45"
+    ],
+    "pagesScheduled": "7 2/8",
+    "pagesCompleted": "5 4/8",
+    "notes": "Sc 46 carried to Day 14 due to SFX reset delay. No safety incidents. Meal break at 12:48 \u2014 within window.",
+    "crewCount": 13,
+    "submittedBy": "Marcus Webb",
+    "timestamp": "2026-04-06T20:15:00.000Z"
+  }
+]

@@ -1,0 +1,80 @@
+[
+  {
+    "shop": "BUNNINGS",
+    "amount": "$45.20",
+    "dept": "ART",
+    "time": "07:39 AM",
+    "uri": "blob:http://192.168.0.184:8081/f39ceebc-3d8e-49f4-9d8d-6a79213c5be9",
+    "id": 1775079595635,
+    "timestamp": "2026-04-01T21:39:55.635Z"
+  },
+  {
+    "shop": "BUNNINGS",
+    "amount": "$45.20",
+    "dept": "ART",
+    "time": "07:40 AM",
+    "uri": "blob:http://192.168.0.184:8081/d5db93e7-8f8e-4a32-b6d3-795409327488",
+    "id": 1775079641630,
+    "timestamp": "2026-04-01T21:40:41.630Z"
+  },
+  {
+    "shop": "BUNNINGS",
+    "amount": "$45.20",
+    "dept": "ART",
+    "time": "07:41 AM",
+    "uri": "blob:http://192.168.0.184:8081/8e3684dd-2770-4824-911d-620318a3e33f",
+    "id": 1775079668571,
+    "timestamp": "2026-04-01T21:41:08.571Z"
+  },
+  {
+    "shop": "BUNNINGS OXENFORD",
+    "amount": "$142.50",
+    "dept": "H",
+    "submittedBy": "Mike Miller",
+    "submittedByRole": "Gaffer",
+    "submittedByDept": "LIGHTING",
+    "id": 1775280464950,
+    "timestamp": "2026-04-04T05:27:44.950Z"
+  },
+  {
+    "shop": "KENNARDS HIRE",
+    "amount": "$380.00",
+    "dept": "G",
+    "submittedBy": "Dave Smith",
+    "submittedByRole": "Swing Driver",
+    "submittedByDept": "UNIT/TRANSPORT",
+    "id": 1775280464958,
+    "timestamp": "2026-04-04T05:27:44.958Z"
+  },
+  {
+    "shop": "7-ELEVEN (FUEL)",
+    "amount": "$95.20",
+    "dept": "N",
+    "submittedBy": "Dave Smith",
+    "submittedByRole": "Swing Driver",
+    "submittedByDept": "UNIT/TRANSPORT",
+    "id": 1775280464965,
+    "timestamp": "2026-04-04T05:27:44.965Z"
+  },
+  {
+    "shop": "OFFICEWORKS",
+    "amount": "$28.40",
+    "dept": "B",
+    "submittedBy": "Jamie Dorward",
+    "submittedByRole": "Producer",
+    "submittedByDept": "PRODUCTION",
+    "id": 1775280464971,
+    "timestamp": "2026-04-04T05:27:44.971Z"
+  },
+  {
+    "shop": "Shell",
+    "amount": "$200",
+    "dept": "N",
+    "submittedBy": "Jamie Dorward",
+    "submittedByRole": "Cast",
+    "submittedByDept": "Driver",
+    "receiptImage": "blob:http://192.168.0.251:4000/8ff2082d-c2f6-46af-be56-ec3059fe4c83",
+    "id": 1775355275552,
+    "timestamp": "2026-04-05T02:14:35.552Z"
+  }
+]

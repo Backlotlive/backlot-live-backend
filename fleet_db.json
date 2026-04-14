@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "type": "Hi-Ace Van",
+    "rego": "BDY 423",
+    "colour": "White",
+    "requiredClass": "C",
+    "unit": "Unit 1",
+    "status": "available",
+    "assignedDriver": null
+  },
+  {
+    "id": 2,
+    "type": "Coaster Bus",
+    "rego": "TDM 891",
+    "colour": "Silver",
+    "requiredClass": "LR",
+    "unit": "Unit 2",
+    "status": "available",
+    "assignedDriver": null
+  },
+  {
+    "id": 3,
+    "type": "Isuzu Camera Truck",
+    "rego": "CAM 001",
+    "colour": "Black",
+    "requiredClass": "MR",
+    "unit": "Unit 3",
+    "status": "available",
+    "assignedDriver": null
+  },
+  {
+    "id": 4,
+    "type": "Honeywagon",
+    "rego": "HWY 555",
+    "colour": "White",
+    "requiredClass": "HR",
+    "unit": "Unit 4",
+    "status": "available",
+    "assignedDriver": null
+  },
+  {
+    "id": 5,
+    "type": "Generator Truck",
+    "rego": "GEN 302",
+    "colour": "Yellow",
+    "requiredClass": "HR",
+    "unit": "Unit 5",
+    "status": "available",
+    "assignedDriver": null
+  },
+  {
+    "id": 6,
+    "type": "Star Trailer Tug",
+    "rego": "STR 099",
+    "colour": "Red",
+    "requiredClass": "HR",
+    "unit": "Unit 6",
+    "status": "available",
+    "assignedDriver": null
+  }
+]

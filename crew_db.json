@@ -1,0 +1,741 @@
+[
+  {
+    "name": "Sarah Thompson",
+    "role": "Set Nurse",
+    "phone": "0400 000 000",
+    "timestamp": "2026-03-31T02:26:18.329Z",
+    "department": "MEDICAL",
+    "productionHistory": [
+      {
+        "id": "prod_thor",
+        "title": "Thor: Love and Thunder",
+        "role": "Set Nurse",
+        "department": "MEDICAL",
+        "joinedAt": "2021-06-01T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_aquaman",
+        "title": "Aquaman and the Lost Kingdom",
+        "role": "Set Nurse",
+        "department": "MEDICAL",
+        "joinedAt": "2022-07-01T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Set Nurse",
+        "department": "MEDICAL",
+        "joinedAt": "2026-03-10T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSignedAt": "2026-03-08T09:00:00.000Z",
+    "firstLoginAt": "2026-03-08T08:55:00.000Z",
+    "invitedAt": "2026-03-07T09:00:00.000Z",
+    "lastSeen": "2026-04-07T03:06:12.624368+00:00"
+  },
+  {
+    "name": "Elvis Presley",
+    "role": "Lead Actor",
+    "department": "ACTORS",
+    "phone": "0400 000 001",
+    "email": "elvis@theking.com",
+    "hourlyRate": 85,
+    "rateMode": "CUSTOM",
+    "timestamp": "2026-04-06T21:36:26.179Z",
+    "employmentType": "Contractor / ABN",
+    "abn": "12 345 678 901",
+    "tfn": "123 456 789",
+    "bankName": "Commonwealth Bank",
+    "bankAccountName": "Elvis Presley",
+    "bsb": "062-000",
+    "acc": "10001000",
+    "superFund": "AustralianSuper",
+    "superABN": "65 714 394 898",
+    "superUSI": "STA0100AU",
+    "superAddress": "GPO Box 1901, Melbourne VIC 3001",
+    "superMemberNumber": "AS-88880001",
+    "emergencyName": "Priscilla Presley",
+    "emergencyRelationship": "Partner",
+    "emergencyPhone": "0400 000 099",
+    "dietary": "None / No Requirements",
+    "tshirtSize": "L",
+    "firstAidCert": "None",
+    "invitedAt": "2026-04-06T21:36:26.179Z",
+    "contractSignedAt": "2026-04-06T21:36:26.179Z",
+    "firstLoginAt": "2026-04-06T21:36:26.179Z",
+    "lastSeen": "2026-04-06T21:36:26.179Z",
+    "productionHistory": [
+      {
+        "id": "prod_elvis",
+        "title": "Elvis",
+        "role": "Lead Actor",
+        "department": "ACTORS",
+        "joinedAt": "2022-03-01T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_faraway_downs",
+        "title": "Faraway Downs",
+        "role": "Lead Actor",
+        "department": "ACTORS",
+        "joinedAt": "2023-01-10T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Lead Actor",
+        "department": "ACTORS",
+        "joinedAt": "2026-03-15T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSigned": true,
+    "isDemo": true,
+    "onboardedAt": "2026-04-06T21:36:26.179Z"
+  },
+  {
+    "name": "Sarah Jones",
+    "role": "Set Nurse",
+    "department": "MEDICAL",
+    "phone": "0411 111 111",
+    "email": "sarah@crew.com",
+    "hourlyRate": 70,
+    "rateMode": "MEAA",
+    "timestamp": "2026-04-04T05:27:28.365Z",
+    "productionHistory": [
+      {
+        "id": "prod_elvis",
+        "title": "Elvis",
+        "role": "Set Nurse / Paramedic",
+        "department": "MEDICAL",
+        "joinedAt": "2022-02-01T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Set Nurse",
+        "department": "MEDICAL",
+        "joinedAt": "2026-03-10T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSignedAt": "2026-03-08T09:00:00.000Z",
+    "firstLoginAt": "2026-03-08T08:55:00.000Z",
+    "invitedAt": "2026-03-07T09:00:00.000Z",
+    "lastSeen": "2026-04-07T03:06:12.624368+00:00"
+  },
+  {
+    "name": "Daniel Walsh",
+    "role": "Swing Driver",
+    "department": "UNIT/TRANSPORT",
+    "phone": "0422 222 222",
+    "email": "dave@crew.com",
+    "hourlyRate": 55,
+    "rateMode": "MEAA",
+    "timestamp": "2026-04-04T05:27:28.371Z",
+    "productionHistory": [
+      {
+        "id": "prod_elvis",
+        "title": "Elvis",
+        "role": "Swing Driver",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2022-02-10T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_aquaman",
+        "title": "Aquaman and the Lost Kingdom",
+        "role": "Swing Driver",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2022-07-05T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Swing Driver",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2026-03-08T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSignedAt": "2026-03-08T09:00:00.000Z",
+    "firstLoginAt": "2026-03-08T08:55:00.000Z",
+    "invitedAt": "2026-03-07T09:00:00.000Z",
+    "lastSeen": "2026-04-07T03:06:12.624368+00:00"
+  },
+  {
+    "name": "Chris Nguyen",
+    "role": "Gaffer",
+    "department": "LIGHTING",
+    "phone": "0433 333 333",
+    "email": "mike@crew.com",
+    "hourlyRate": 75,
+    "rateMode": "MEAA",
+    "timestamp": "2026-04-04T05:27:28.377Z",
+    "productionHistory": [
+      {
+        "id": "prod_thor",
+        "title": "Thor: Love and Thunder",
+        "role": "Best Boy Electric",
+        "department": "LIGHTING",
+        "joinedAt": "2021-06-05T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_furiosa",
+        "title": "Furiosa: A Mad Max Saga",
+        "role": "Gaffer",
+        "department": "LIGHTING",
+        "joinedAt": "2023-03-10T09:00:00.000Z",
+        "studio": "Docklands Studios, Melbourne VIC"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Gaffer",
+        "department": "LIGHTING",
+        "joinedAt": "2026-03-05T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSignedAt": "2026-03-08T09:00:00.000Z",
+    "firstLoginAt": "2026-03-08T08:55:00.000Z",
+    "invitedAt": "2026-03-07T09:00:00.000Z",
+    "lastSeen": "2026-04-07T03:06:12.624368+00:00"
+  },
+  {
+    "name": "Lisa Chen",
+    "role": "1st AC",
+    "department": "CAMERA",
+    "phone": "0444 444 444",
+    "email": "lisa@crew.com",
+    "hourlyRate": 72,
+    "rateMode": "MEAA",
+    "timestamp": "2026-04-04T05:27:28.383Z",
+    "productionHistory": [
+      {
+        "id": "prod_elvis",
+        "title": "Elvis",
+        "role": "2nd AC",
+        "department": "CAMERA",
+        "joinedAt": "2022-02-12T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_fall_guy",
+        "title": "The Fall Guy",
+        "role": "1st AC",
+        "department": "CAMERA",
+        "joinedAt": "2023-08-01T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "1st AC",
+        "department": "CAMERA",
+        "joinedAt": "2026-03-12T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSignedAt": "2026-03-08T09:00:00.000Z",
+    "firstLoginAt": "2026-03-08T08:55:00.000Z",
+    "invitedAt": "2026-03-07T09:00:00.000Z",
+    "lastSeen": "2026-04-07T03:06:12.624368+00:00"
+  },
+  {
+    "name": "Jamie Dorward",
+    "address": "123 Studio Drive, Sydney, NSW 2000",
+    "phone": "0419 485 888",
+    "email": "jamie@backlot.live",
+    "abn": "12 345 678 901",
+    "bsb": "062-000",
+    "acc": "12345678",
+    "superName": "",
+    "superNum": "",
+    "superUsi": "56754",
+    "tfn": "123 456 789",
+    "dietary": "",
+    "emergency": "",
+    "licenseScanned": true,
+    "licenseImage": "blob:http://192.168.0.251:4000/c62f3715-7fba-46e5-a04a-d5cc4dc022e2",
+    "department": "UNIT/TRANSPORT",
+    "role": "Unit Manager",
+    "superFundName": "Australian Super",
+    "superMemberNum": "456788999",
+    "superUsi2": "98776",
+    "superType": "APRA",
+    "timestamp": "2026-04-05T03:08:28.024Z",
+    "lastSeen": "2026-04-07T03:06:12.624368+00:00",
+    "profilePhoto": "blob:http://192.168.0.251:4000/65bed197-95a4-48f4-b44a-6b8d7e301703",
+    "idPhoto": "blob:http://192.168.0.251:4000/65bed197-95a4-48f4-b44a-6b8d7e301703",
+    "signatureDataUrl": "data:image/png;base64,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",
+    "productionHistory": [
+      {
+        "id": "prod_aquaman",
+        "title": "Aquaman and the Lost Kingdom",
+        "role": "Unit Manager",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2022-07-01T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_furiosa",
+        "title": "Furiosa: A Mad Max Saga",
+        "role": "Unit Manager",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2023-03-01T09:00:00.000Z",
+        "studio": "Docklands Studios, Melbourne VIC"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Producer / Unit Manager",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2026-02-01T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSignedAt": "2026-03-08T09:00:00.000Z",
+    "firstLoginAt": "2026-03-08T08:55:00.000Z",
+    "invitedAt": "2026-03-07T09:00:00.000Z"
+  },
+  {
+    "name": "Thor Odinson",
+    "phone": "0400 000 002",
+    "email": "thor@asgard.au",
+    "role": "Lead Actor",
+    "department": "ACTORS",
+    "employmentType": "Contractor / ABN",
+    "abn": "98 765 432 109",
+    "tfn": "987 654 321",
+    "bankName": "Westpac",
+    "bankAccountName": "Thor Odinson",
+    "bsb": "032-001",
+    "acc": "20002000",
+    "superFund": "Hostplus",
+    "superABN": "68 657 495 890",
+    "superUSI": "HOS0100AU",
+    "superAddress": "GPO Box 764, Melbourne VIC 3001",
+    "superMemberNumber": "HP-77770002",
+    "emergencyName": "Jane Foster",
+    "emergencyRelationship": "Partner",
+    "emergencyPhone": "0400 000 098",
+    "dietary": "None / No Requirements",
+    "tshirtSize": "XXL",
+    "firstAidCert": "CPR Only",
+    "invitedAt": "2026-04-06T21:36:26.191Z",
+    "contractSignedAt": "2026-04-06T21:36:26.191Z",
+    "firstLoginAt": "2026-04-06T21:36:26.191Z",
+    "lastSeen": "2026-04-06T21:36:26.191Z",
+    "productionHistory": [
+      {
+        "id": "prod_thor",
+        "title": "Thor: Love and Thunder",
+        "role": "Lead Actor",
+        "department": "ACTORS",
+        "joinedAt": "2021-06-01T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_aquaman",
+        "title": "Aquaman and the Lost Kingdom",
+        "role": "Supporting Actor",
+        "department": "ACTORS",
+        "joinedAt": "2022-07-15T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_furiosa",
+        "title": "Furiosa: A Mad Max Saga",
+        "role": "Supporting Actor",
+        "department": "ACTORS",
+        "joinedAt": "2023-04-20T09:00:00.000Z",
+        "studio": "Docklands Studios Melbourne VIC"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Lead Actor",
+        "department": "ACTORS",
+        "joinedAt": "2026-03-15T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSigned": true,
+    "isDemo": true,
+    "timestamp": "2026-04-06T21:36:26.191Z",
+    "onboardedAt": "2026-04-06T21:36:26.191Z"
+  },
+  {
+    "name": "Arthur Curry",
+    "phone": "0400 000 003",
+    "email": "arthur@atlantis.au",
+    "role": "Lead Actor",
+    "department": "ACTORS",
+    "employmentType": "Contractor / ABN",
+    "abn": "55 111 222 333",
+    "tfn": "555 111 222",
+    "bankName": "ANZ",
+    "bankAccountName": "Arthur Curry",
+    "bsb": "013-002",
+    "acc": "30003000",
+    "superFund": "REST Industry Super",
+    "superABN": "78 520 106 049",
+    "superUSI": "REST0001AU",
+    "superAddress": "PO Box 350, Parramatta NSW 2124",
+    "superMemberNumber": "RST-66660003",
+    "emergencyName": "Mera Curry",
+    "emergencyRelationship": "Spouse",
+    "emergencyPhone": "0400 000 097",
+    "dietary": "Pescatarian",
+    "tshirtSize": "XL",
+    "firstAidCert": "Senior First Aid (HLTAID011)",
+    "invitedAt": "2026-04-06T21:36:26.194Z",
+    "contractSignedAt": "2026-04-06T21:36:26.194Z",
+    "firstLoginAt": "2026-04-06T21:36:26.194Z",
+    "lastSeen": "2026-04-06T21:36:26.194Z",
+    "productionHistory": [
+      {
+        "id": "prod_aquaman",
+        "title": "Aquaman and the Lost Kingdom",
+        "role": "Lead Actor",
+        "department": "ACTORS",
+        "joinedAt": "2022-07-01T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_mortal_kombat",
+        "title": "Mortal Kombat",
+        "role": "Stunt Coordinator",
+        "department": "STUNTS",
+        "joinedAt": "2020-11-01T09:00:00.000Z",
+        "studio": "Docklands Studios Melbourne VIC"
+      },
+      {
+        "id": "prod_fall_guy",
+        "title": "The Fall Guy",
+        "role": "Supporting Actor",
+        "department": "ACTORS",
+        "joinedAt": "2023-09-10T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Lead Actor",
+        "department": "ACTORS",
+        "joinedAt": "2026-03-15T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSigned": true,
+    "isDemo": true,
+    "timestamp": "2026-04-06T21:36:26.194Z",
+    "onboardedAt": "2026-04-06T21:36:26.194Z"
+  },
+  {
+    "name": "Sarah Mitchell",
+    "phone": "0400 000 004",
+    "email": "sarah.mitchell@crew.au",
+    "role": "Gaffer",
+    "department": "LIGHTING",
+    "employmentType": "Contractor / ABN",
+    "abn": "44 222 333 444",
+    "tfn": "444 222 333",
+    "bankName": "NAB",
+    "bankAccountName": "Sarah Mitchell",
+    "bsb": "082-057",
+    "acc": "40004000",
+    "superFund": "Media Super",
+    "superABN": "42 442 458 058",
+    "superUSI": "MED0100AU",
+    "superAddress": "GPO Box 4303, Melbourne VIC 3001",
+    "superMemberNumber": "MS-55550004",
+    "emergencyName": "Tom Mitchell",
+    "emergencyRelationship": "Spouse",
+    "emergencyPhone": "0400 000 096",
+    "dietary": "Vegetarian",
+    "tshirtSize": "M",
+    "firstAidCert": "Senior First Aid (HLTAID011)",
+    "invitedAt": "2026-04-06T21:36:26.196Z",
+    "contractSignedAt": "2026-04-06T21:36:26.196Z",
+    "firstLoginAt": "2026-04-06T21:36:26.196Z",
+    "lastSeen": "2026-04-06T21:36:26.196Z",
+    "productionHistory": [
+      {
+        "id": "prod_mortal_kombat",
+        "title": "Mortal Kombat",
+        "role": "Gaffer",
+        "department": "LIGHTING",
+        "joinedAt": "2020-10-01T09:00:00.000Z",
+        "studio": "Docklands Studios Melbourne VIC"
+      },
+      {
+        "id": "prod_elvis",
+        "title": "Elvis",
+        "role": "Gaffer",
+        "department": "LIGHTING",
+        "joinedAt": "2022-02-15T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_furiosa",
+        "title": "Furiosa: A Mad Max Saga",
+        "role": "Gaffer",
+        "department": "LIGHTING",
+        "joinedAt": "2023-03-01T09:00:00.000Z",
+        "studio": "Docklands Studios Melbourne VIC"
+      },
+      {
+        "id": "prod_fall_guy",
+        "title": "The Fall Guy",
+        "role": "Gaffer",
+        "department": "LIGHTING",
+        "joinedAt": "2023-08-20T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Gaffer",
+        "department": "LIGHTING",
+        "joinedAt": "2026-03-10T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSigned": true,
+    "isDemo": true,
+    "timestamp": "2026-04-06T21:36:26.196Z",
+    "onboardedAt": "2026-04-06T21:36:26.196Z"
+  },
+  {
+    "name": "Marcus Webb",
+    "phone": "0400 000 005",
+    "email": "marcus.webb@crew.au",
+    "role": "1st AD",
+    "department": "PRODUCTION",
+    "employmentType": "PAYG Employee",
+    "tfn": "333 444 555",
+    "bankName": "Commonwealth Bank",
+    "bankAccountName": "Marcus Webb",
+    "bsb": "062-692",
+    "acc": "50005000",
+    "superFund": "HESTA",
+    "superABN": "64 971 749 321",
+    "superUSI": "HES0100AU",
+    "superAddress": "Locked Bag 5136, Parramatta NSW 2124",
+    "superMemberNumber": "HES-44440005",
+    "emergencyName": "Diane Webb",
+    "emergencyRelationship": "Spouse",
+    "emergencyPhone": "0400 000 095",
+    "dietary": "None / No Requirements",
+    "tshirtSize": "L",
+    "firstAidCert": "Emergency First Aid Response",
+    "invitedAt": "2026-04-06T21:36:26.199Z",
+    "contractSignedAt": "2026-04-06T21:36:26.199Z",
+    "firstLoginAt": "2026-04-06T21:36:26.199Z",
+    "lastSeen": "2026-04-06T21:36:26.199Z",
+    "productionHistory": [
+      {
+        "id": "prod_thor",
+        "title": "Thor: Love and Thunder",
+        "role": "2nd AD",
+        "department": "PRODUCTION",
+        "joinedAt": "2021-05-15T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_aquaman",
+        "title": "Aquaman and the Lost Kingdom",
+        "role": "1st AD",
+        "department": "PRODUCTION",
+        "joinedAt": "2022-06-01T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_faraway_downs",
+        "title": "Faraway Downs",
+        "role": "1st AD",
+        "department": "PRODUCTION",
+        "joinedAt": "2023-01-05T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_fall_guy",
+        "title": "The Fall Guy",
+        "role": "1st AD",
+        "department": "PRODUCTION",
+        "joinedAt": "2023-07-15T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "1st AD",
+        "department": "PRODUCTION",
+        "joinedAt": "2026-02-28T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSigned": true,
+    "isDemo": true,
+    "timestamp": "2026-04-06T21:36:26.199Z",
+    "onboardedAt": "2026-04-06T21:36:26.199Z"
+  },
+  {
+    "name": "Priya Sharma",
+    "phone": "0400 000 006",
+    "email": "priya.sharma@crew.au",
+    "role": "DOP",
+    "department": "CAMERA",
+    "employmentType": "Contractor / ABN",
+    "abn": "77 888 999 000",
+    "tfn": "777 888 999",
+    "bankName": "Westpac",
+    "bankAccountName": "Priya Sharma",
+    "bsb": "034-789",
+    "acc": "60006000",
+    "superFund": "AustralianSuper",
+    "superABN": "65 714 394 898",
+    "superUSI": "STA0100AU",
+    "superAddress": "GPO Box 1901, Melbourne VIC 3001",
+    "superMemberNumber": "AS-33330006",
+    "emergencyName": "Raj Sharma",
+    "emergencyRelationship": "Spouse",
+    "emergencyPhone": "0400 000 094",
+    "dietary": "Vegetarian",
+    "tshirtSize": "S",
+    "firstAidCert": "CPR Only",
+    "invitedAt": "2026-04-06T21:36:26.201Z",
+    "contractSignedAt": "2026-04-06T21:36:26.201Z",
+    "firstLoginAt": "2026-04-06T21:36:26.201Z",
+    "lastSeen": "2026-04-06T21:36:26.201Z",
+    "productionHistory": [
+      {
+        "id": "prod_elvis",
+        "title": "Elvis",
+        "role": "1st AC",
+        "department": "CAMERA",
+        "joinedAt": "2022-01-10T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_furiosa",
+        "title": "Furiosa: A Mad Max Saga",
+        "role": "Camera Operator",
+        "department": "CAMERA",
+        "joinedAt": "2023-02-20T09:00:00.000Z",
+        "studio": "Docklands Studios Melbourne VIC"
+      },
+      {
+        "id": "prod_fall_guy",
+        "title": "The Fall Guy",
+        "role": "DOP",
+        "department": "CAMERA",
+        "joinedAt": "2023-07-01T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "DOP",
+        "department": "CAMERA",
+        "joinedAt": "2026-03-01T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSigned": true,
+    "isDemo": true,
+    "timestamp": "2026-04-06T21:36:26.201Z",
+    "onboardedAt": "2026-04-06T21:36:26.201Z"
+  },
+  {
+    "name": "Dave Kowalski",
+    "phone": "0400 000 007",
+    "email": "dave.k@crew.au",
+    "role": "Unit Manager",
+    "department": "UNIT/TRANSPORT",
+    "employmentType": "PAYG Employee",
+    "tfn": "222 333 444",
+    "bankName": "Bank of Queensland",
+    "bankAccountName": "Dave Kowalski",
+    "bsb": "124-001",
+    "acc": "70007000",
+    "superFund": "MTAA Super",
+    "superABN": "74 559 365 913",
+    "superUSI": "MTA0100AU",
+    "superAddress": "Locked Bag 20013, Melbourne VIC 3001",
+    "superMemberNumber": "MTA-22220007",
+    "emergencyName": "Linda Kowalski",
+    "emergencyRelationship": "Spouse",
+    "emergencyPhone": "0400 000 093",
+    "dietary": "None / No Requirements",
+    "tshirtSize": "XL",
+    "firstAidCert": "Senior First Aid (HLTAID011)",
+    "invitedAt": "2026-04-06T21:36:26.203Z",
+    "contractSignedAt": "2026-04-06T21:36:26.203Z",
+    "firstLoginAt": "2026-04-06T21:36:26.203Z",
+    "lastSeen": "2026-04-06T21:36:26.203Z",
+    "productionHistory": [
+      {
+        "id": "prod_mortal_kombat",
+        "title": "Mortal Kombat",
+        "role": "Swing Driver",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2020-10-15T09:00:00.000Z",
+        "studio": "Docklands Studios Melbourne VIC"
+      },
+      {
+        "id": "prod_thor",
+        "title": "Thor: Love and Thunder",
+        "role": "Swing Driver",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2021-06-10T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_aquaman",
+        "title": "Aquaman and the Lost Kingdom",
+        "role": "Unit Manager",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2022-07-20T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      },
+      {
+        "id": "prod_furiosa",
+        "title": "Furiosa: A Mad Max Saga",
+        "role": "Unit Manager",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2023-03-15T09:00:00.000Z",
+        "studio": "Docklands Studios Melbourne VIC"
+      },
+      {
+        "id": "prod_fall_guy",
+        "title": "The Fall Guy",
+        "role": "Unit Manager",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2023-08-01T09:00:00.000Z",
+        "studio": "Fox Studios Australia, Sydney NSW"
+      },
+      {
+        "id": "prod_diesel_monster",
+        "title": "The Demise of the Diesel Monster",
+        "role": "Unit Manager",
+        "department": "UNIT/TRANSPORT",
+        "joinedAt": "2026-02-20T09:00:00.000Z",
+        "studio": "Village Roadshow Studios, Gold Coast QLD"
+      }
+    ],
+    "contractSigned": true,
+    "isDemo": true,
+    "timestamp": "2026-04-06T21:36:26.203Z",
+    "onboardedAt": "2026-04-06T21:36:26.203Z"
+  }
+]
