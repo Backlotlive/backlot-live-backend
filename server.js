@@ -856,6 +856,17 @@ app.get('/crew/full', requireAdmin, (req, res) => {
 });
 
 // DELETE test crew
+// DELETE a specific crew member by phone
+app.delete('/crew/:phone', requireAdmin, (req, res) => {
+  const code = req.query.code || 'DEMO01';
+  const phone = req.params.phone.replace(/\s/g,'');
+  const crewData = readProductionDb(code, 'crew_db.json');
+  const filtered = crewData.filter(c => c.phone?.replace(/\s/g,'') !== phone);
+  writeProductionDb(code, 'crew_db.json', filtered);
+  io.emit('sync_crew', filtered);
+  res.json({ success: true, remaining: filtered.length });
+});
+
 app.delete('/crew/test-cleanup', requireAdmin, (req, res) => {
   const code = req.query.code || 'DEMO01';
   const crewData = readProductionDb(code, 'crew_db.json');
