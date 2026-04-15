@@ -855,6 +855,13 @@ app.get('/crew/full', requireAdmin, (req, res) => {
   res.json(readProductionDb(code, 'crew_db.json'));
 });
 
+// GET /admin/crew — admin view of all crew for a production
+app.get('/admin/crew', requireAdmin, (req, res) => {
+  const code = req.query.code || 'DEMO01';
+  const crew = readProductionDb(code, 'crew_db.json');
+  res.json(crew);
+});
+
 // DELETE test crew
 // DELETE a specific crew member by phone
 app.delete('/crew/:phone', requireAdmin, (req, res) => {
@@ -963,8 +970,9 @@ const savePrefs = (code, data) => writeProductionDb(code, 'catering_preferences.
 
 app.post('/catering/preference', (req, res) => {
   const code = req.query.code || req.body.code || 'DEMO01';
-  const { date, phone, name, department, role, meal, allergies, note } = req.body;
-  if (!date || !phone || !meal) return res.status(400).json({ error: 'date, phone, and meal required' });
+  const { phone, name, department, role, meal, allergies, note } = req.body;
+  const date = req.body.date || new Date().toISOString().split('T')[0];
+  if (!phone || !meal) return res.status(400).json({ error: 'phone and meal required' });
   const entry = {
     date, phone: phone.replace(/\s/g, ''), name: name || '', department: department || '',
     role: role || '', meal, allergies: allergies || [], note: note || '',
