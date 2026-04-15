@@ -698,6 +698,18 @@ app.get('/crew/lookup', (req, res) => {
 // ─── ONBOARDING ──────────────────────────────────────────────────────────────
 app.post('/onboard', (req, res) => {
   const code = req.query.code || req.body.code || 'DEMO01';
+
+  // Validate production code exists
+  if (code !== 'DEMO01') {
+    const validProduction = productionsRegistry.find(p => p.code === code);
+    if (!validProduction) {
+      return res.status(404).json({
+        error: 'invalid_production_code',
+        message: 'Production code not found. Please check your invite and try again.'
+      });
+    }
+  }
+
   const now = new Date().toISOString();
   const entry = { ...req.body, timestamp: now };
   delete entry.code;
@@ -1769,16 +1781,16 @@ app.post('/create-checkout-session', async (req, res) => {
         payment_method_types: ['card'], mode: 'payment',
         line_items: [{ price_data: { currency: 'aud', product_data: { name: priceConfig.name }, unit_amount: priceConfig.amount }, quantity: 1 }],
         customer_email: contactEmail, metadata,
-        success_url: 'https://backlotlive.com.au/success?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url: 'https://backlotlive.com.au/pricing',
+        success_url: 'https://backlot-live-app.vercel.app/success?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url: 'https://backlot-live-app.vercel.app/website.html#pricing',
       });
     } else {
       session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'], mode: 'subscription',
         line_items: [{ price_data: { currency: 'aud', product_data: { name: priceConfig.name }, unit_amount: priceConfig.amount, recurring: { interval: 'year' } }, quantity: 1 }],
         customer_email: contactEmail, metadata,
-        success_url: 'https://backlotlive.com.au/success?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url: 'https://backlotlive.com.au/pricing',
+        success_url: 'https://backlot-live-app.vercel.app/success?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url: 'https://backlot-live-app.vercel.app/website.html#pricing',
       });
     }
     res.json({ url: session.url });
